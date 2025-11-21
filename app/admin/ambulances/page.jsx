@@ -38,15 +38,10 @@ export default function AmbulancePage() {
     mutationFn: async (id) => await api.delete(`/ambulance/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["ambulances"]);
-      toast({
-        title: "Deleted",
-        description: "Ambulance deleted successfully",
-      });
+      toast.error("Ambulance deleted successfully");
       setDeleteAmbulance(null);
     },
     onError: (error) => {
-
-
       toast.error(
         error.response?.data?.message || "Failed to delete ambulance"
       );

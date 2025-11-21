@@ -96,8 +96,6 @@ export default function UserDetailPage({ params }) {
       return response.data;
     },
     onSuccess: () => {
-
-
       toast.success("User updated successfully"); // ✅ success toast
 
       queryClient.invalidateQueries(["user", id]);
@@ -106,11 +104,7 @@ export default function UserDetailPage({ params }) {
       setShowConfirmDialog(false);
     },
     onError: (error) => {
-
-
-      toast.error(
-        error.response?.data?.message || "Failed to update user"
-      );
+      toast.error(error.response?.data?.message || "Failed to update user");
     },
   });
 
@@ -119,17 +113,12 @@ export default function UserDetailPage({ params }) {
       await api.delete(`/users/admin/${id}`);
     },
     onSuccess: () => {
-
-
       toast.success("User deleted successfully"); // ✅ success toast
 
       router.push("/admin/users");
     },
     onError: (error) => {
-
-      toast.error(
-        error.response?.data?.message || "Failed to delete user"
-      );
+      toast.error(error.response?.data?.message || "Failed to delete user");
     },
   });
 
@@ -139,20 +128,13 @@ export default function UserDetailPage({ params }) {
       return response.data;
     },
     onSuccess: () => {
-
-
       toast.success("User status updated successfully"); // ✅ success toast
-
 
       queryClient.invalidateQueries(["user", id]);
       queryClient.invalidateQueries(["users"]);
     },
     onError: (error) => {
-
-
-      toast.error(
-        error.response?.data?.message || "Failed to update status"
-      );
+      toast.error(error.response?.data?.message || "Failed to update status");
     },
   });
 
@@ -167,10 +149,8 @@ export default function UserDetailPage({ params }) {
     });
 
     if (Object.keys(changes).length === 0) {
-      toast({
-        title: "No changes",
-        description: "No changes were made to update",
-      });
+      toast.error("No changes were made to update");
+
       setIsEditing(false);
       return;
     }
@@ -265,8 +245,8 @@ export default function UserDetailPage({ params }) {
               {statusMutation.isLoading
                 ? "Updating..."
                 : user.status === "active"
-                  ? "Block User"
-                  : "Unblock User"}
+                ? "Block User"
+                : "Unblock User"}
             </Button>
             <Button
               variant="destructive"
@@ -450,13 +430,13 @@ export default function UserDetailPage({ params }) {
                         />
                         {user.passportNumber !==
                           watchedValues.passportNumber && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Previous:{" "}
-                              <span className="font-medium">
-                                {user.passportNumber || "Not set"}
-                              </span>
-                            </p>
-                          )}
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Previous:{" "}
+                            <span className="font-medium">
+                              {user.passportNumber || "Not set"}
+                            </span>
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <p className="font-medium">

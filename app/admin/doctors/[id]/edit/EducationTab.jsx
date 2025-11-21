@@ -91,7 +91,10 @@ export default function EducationTab({ doctorId }) {
   const handleDelete = async (educationId) => {
     try {
       await api.delete(`/doctor/${doctorId}/education/${educationId}`);
-      toast({ title: "Deleted", description: "Education deleted" });
+
+
+      toast.success("Education deleted");
+
 
       setEducationList((prev) => prev.filter((edu) => edu._id !== educationId));
     } catch (error) {

@@ -49,14 +49,12 @@ export default function HospitalsPage() {
     mutationFn: async (id) => await api.delete(`/hospital/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["hospitals"]);
-      toast({ title: "Deleted", description: "Hospital deleted successfully" });
+      toast.success("Hospital deleted successfully");
+
       setDeleteHospital(null);
     },
     onError: (error) => {
-
-      toast.error(
-        error.response?.data?.message || "Failed to delete hospital"
-      );
+      toast.error(error.response?.data?.message || "Failed to delete hospital");
     },
   });
 

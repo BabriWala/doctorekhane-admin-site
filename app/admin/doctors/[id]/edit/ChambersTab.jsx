@@ -101,7 +101,8 @@ export default function ChambersTab({ doctorId }) {
   const handleDelete = async (chamberId) => {
     try {
       await api.delete(`/doctor/${doctorId}/chamber/${chamberId}`);
-      toast({ title: "Deleted", description: "Chamber deleted" });
+      toast.success("Chamber deleted");
+
       setChambers((prev) => prev.filter((c) => c._id !== chamberId));
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to delete chamber");

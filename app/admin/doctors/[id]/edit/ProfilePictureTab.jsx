@@ -28,8 +28,6 @@ export default function ProfilePictureTab({ doctorId }) {
           setProfilePicture(res.data.personalDetails.profilePicture);
         }
       } catch (error) {
-
-
         toast.error(
           error.response?.data?.message || "Failed to fetch profile picture"
         );
@@ -49,31 +47,25 @@ export default function ProfilePictureTab({ doctorId }) {
   // Handle upload
   const handleUpload = async (e) => {
     e.preventDefault();
-    const fileInput = e.target.elements.profilePicture;
-    if (!fileInput.files[0]) {
-      toast({ title: "Error", description: "Please select a file first" });
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("profilePicture", fileInput.files[0]);
 
     try {
+      const fileInput = e.target.elements.profilePicture;
+      if (!fileInput.files[0]) {
+        toast.error("Please select a file first");
+        return;
+      }
+      const formData = new FormData();
+      formData.append("profilePicture", fileInput.files[0]);
       setLoading(true);
       const res = await api.put(
         `/doctor/${doctorId}/profile-picture`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-
       setProfilePicture(res.data.profilePicture);
       setPreview(null);
-
-
       toast.success("Profile picture updated successfully"); // ✅ success toast
-
     } catch (error) {
-
       toast.error(
         error.response?.data?.message || "Failed to update profile picture"
       );
@@ -96,7 +88,7 @@ export default function ProfilePictureTab({ doctorId }) {
           <div className="mb-4">
             <p className="text-sm text-gray-500 mb-2">Current Picture:</p>
             <img
-              src={`http://localhost:5000${profilePicture}`}
+              src={`${process.env.NEXT_PUBLIC_API_URL}${profilePicture}`}
               alt="Profile"
               className="w-32 h-32 rounded-full object-cover border"
             />

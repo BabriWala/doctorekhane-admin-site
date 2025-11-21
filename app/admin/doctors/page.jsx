@@ -50,8 +50,7 @@ export default function DoctorsPage() {
     mutationFn: async (id) => await api.delete(`/doctor/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["doctors"]);
-      toast({ title: "Success", description: "Doctor deleted successfully" });
-
+      toast.success("Doctor deleted successfully");
       setDeleteDoctor(null);
     },
     onError: (error) => {

@@ -91,7 +91,7 @@ export default function ExperienceTab({ doctorId }) {
   const handleDelete = async (experienceId) => {
     try {
       await api.delete(`/doctor/${doctorId}/experience/${experienceId}`);
-      toast({ title: "Deleted", description: "Experience deleted" });
+      toast.success("Experience deleted");
 
       setExperienceList((prev) =>
         prev.filter((exp) => exp._id !== experienceId)

@@ -85,18 +85,12 @@ export default function UsersPage() {
     try {
       await api.post("/users/bulk-action", { action, userIds });
 
-
       toast.success(`${action} completed for ${userIds.length} users`); // ✅ success toast
 
       refetch();
     } catch (error) {
-
-
-      toast.error(
-        error.response?.data?.message || "Action failed"
-      );
+      toast.error(error.response?.data?.message || "Action failed");
     }
-
   };
 
   const handleExport = async () => {
@@ -110,11 +104,7 @@ export default function UsersPage() {
       link.click();
       link.remove();
     } catch (error) {
-      toast({
-        title: "Export failed",
-        description: error.response?.data?.message || "Failed to export users",
-        variant: "destructive",
-      });
+      toast.error("Failed to export users");
     }
   };
 

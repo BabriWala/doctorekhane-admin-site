@@ -52,17 +52,12 @@ export default function ProfilePage() {
       return response.data;
     },
     onSuccess: () => {
-
       toast.success("Profile updated successfully"); // ✅ success toast
 
       getMe(); // Refresh user data
     },
     onError: (error) => {
-
-
-      toast.error(
-        error.response?.data?.message || "Failed to update profile"
-      );
+      toast.error(error.response?.data?.message || "Failed to update profile");
     },
   });
 
@@ -79,17 +74,12 @@ export default function ProfilePage() {
       return response.data;
     },
     onSuccess: () => {
-
       toast.success("Profile photo updated successfully"); // ✅ success toast
 
       getMe(); // Refresh user data
     },
     onError: (error) => {
-
-
-      toast.error(
-        error.response?.data?.message || "Failed to upload photo"
-      );
+      toast.error(error.response?.data?.message || "Failed to upload photo");
     },
   });
 
@@ -98,18 +88,11 @@ export default function ProfilePage() {
       await api.delete("/auth/account", { data: { password } });
     },
     onSuccess: () => {
-      toast({
-        title: "Account deleted",
-        description: "Your account has been permanently deleted",
-      });
+      toast.success("Your account has been permanently deleted");
       // Auth provider will handle logout and redirect
     },
     onError: (error) => {
-
-
-      toast.error(
-        error.response?.data?.message || "Failed to delete account"
-      );
+      toast.error(error.response?.data?.message || "Failed to delete account");
     },
   });
 
@@ -122,10 +105,8 @@ export default function ProfilePage() {
     });
 
     if (Object.keys(changes).length === 0) {
-      toast({
-        title: "No changes",
-        description: "No changes were made to update",
-      });
+      toast.success("No changes were made to update");
+
       return;
     }
 
@@ -134,11 +115,8 @@ export default function ProfilePage() {
 
   const handleDeleteAccount = () => {
     if (!deletePassword) {
-      toast({
-        title: "Password required",
-        description: "Please enter your password to confirm account deletion",
-        variant: "destructive",
-      });
+      toast.error("Please enter your password to confirm account deletion");
+
       return;
     }
     deleteMutation.mutate(deletePassword);

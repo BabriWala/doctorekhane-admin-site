@@ -81,7 +81,7 @@ export default function ImagesTab({ hospitalId }) {
       setLoading(true);
       const res = await api.delete(`/hospital/${hospitalId}/images/${imageId}`);
       setImages(res.data.images);
-      toast({ title: "Success", description: "Image deleted successfully" });
+      toast.success("Image deleted successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to delete image");
     } finally {
@@ -105,7 +105,9 @@ export default function ImagesTab({ hospitalId }) {
               <div key={img} className="relative">
                 <img
                   src={
-                    img.startsWith("http") ? img : `http://localhost:5000${img}`
+                    img.startsWith("http")
+                      ? img
+                      : `${process.env.NEXT_PUBLIC_API_URL}${img}`
                   }
                   alt="Hospital"
                   className="w-full h-32 object-cover rounded border"

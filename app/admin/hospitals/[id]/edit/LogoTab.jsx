@@ -89,7 +89,9 @@ export default function LogoTab({ hospitalId }) {
             <p className="text-sm text-gray-500 mb-2">Current Logo:</p>
             <img
               src={
-                logo.startsWith("http") ? logo : `http://localhost:5000${logo}`
+                logo.startsWith("http")
+                  ? logo
+                  : `${process.env.NEXT_PUBLIC_API_URL}${logo}`
               }
               alt="Logo"
               className="w-32 h-32 rounded object-cover border"

@@ -38,18 +38,12 @@ export default function BloodDonorPage() {
     mutationFn: async (id) => await api.delete(`/blood-donor/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["blood-donors"]);
-      toast({
-        title: "Deleted",
-        description: "Blood donor deleted successfully",
-      });
+      toast.success("Blood donor deleted successfully");
+
       setDeleteDonor(null);
     },
     onError: (error) => {
-
-
-      toast.error(
-        error.response?.data?.message || "Failed to delete donor"
-      );
+      toast.error(error.response?.data?.message || "Failed to delete donor");
     },
   });
 

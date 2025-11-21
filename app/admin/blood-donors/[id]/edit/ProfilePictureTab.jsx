@@ -28,9 +28,9 @@ export default function ProfilePictureTab({ donorId }) {
           setProfilePicture(res.data.basicInfo.profilePicture);
         }
       } catch (error) {
-
         toast.error(
-          error.response?.data?.message || "Failed to fetch donor profile picture"
+          error.response?.data?.message ||
+            "Failed to fetch donor profile picture"
         );
       }
     };
@@ -50,7 +50,7 @@ export default function ProfilePictureTab({ donorId }) {
     e.preventDefault();
     const fileInput = e.target.elements.profilePicture;
     if (!fileInput.files[0]) {
-      toast({ title: "Error", description: "Please select a file first" });
+      toast.error("Please select a file first");
       return;
     }
 
@@ -68,12 +68,8 @@ export default function ProfilePictureTab({ donorId }) {
       setProfilePicture(res.data.profilePicture);
       setPreview(null);
 
-
-
       toast.success("Profile picture updated successfully"); // ✅ success toast
-
     } catch (error) {
-
       toast.error(
         error.response?.data?.message || "Failed to update profile picture"
       );

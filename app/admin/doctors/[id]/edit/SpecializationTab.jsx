@@ -81,7 +81,7 @@ export default function SpecializationTab({ doctorId }) {
   const handleDelete = async (id) => {
     try {
       await api.delete(`/doctor/${doctorId}/specialization/${id}`);
-      toast({ title: "Deleted", description: "Specialization deleted" });
+      toast.success("Specialization deleted");
       setSpecializationList((prev) => prev.filter((s) => s._id !== id));
     } catch (error) {
       toast.error(
