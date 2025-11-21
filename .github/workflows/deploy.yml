@@ -22,5 +22,6 @@ jobs:
             cd /root/doctorekhane-admin-site
             git pull origin main
             pnpm install
+            pnpm run build
             pnpm run dev
             pm2 restart doctorekhane-admin
