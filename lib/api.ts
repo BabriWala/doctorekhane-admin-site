@@ -45,12 +45,18 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // ❗ VERY IMPORTANT - skip refresh endpoint
+    if (originalRequest.url === "/auth/refresh-token") {
+      return Promise.reject(error);
+    }
+
     if (!error.response) {
       return Promise.reject({
         response: { data: { message: "Network error. Try again." } },
       });
     }
 
+    // If 401, try refresh
     if (error.response.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -65,13 +71,24 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { data } = await api.post("/auth/refresh-token");
+        console.log("I am here in refresh");
+        const { data } = await api.post(
+          "/auth/refresh-token",
+          {},
+          { withCredentials: true }
+        );
+
+        if (!data?.accessToken) {
+          throw new Error("No access token received");
+        }
+
         accessToken = data.accessToken;
         processQueue(null, data.accessToken);
 
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
+        console.log("I am here in refresh error");
         processQueue(refreshError, null);
         accessToken = null;
 
