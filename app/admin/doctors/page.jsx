@@ -26,11 +26,8 @@ export default function DoctorsPage() {
       const response = await api.get("/doctor", {
         params: { search: searchTerm },
       });
-      return response.data; // assume API returns array
+      return response.data.data; // <-- FIXED
     },
-    refetchOnMount: "always", // Always refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when tab/window regains focus
-    refetchOnReconnect: true, // Refetch if browser reconnects to network
   });
 
   // Flatten doctors data
