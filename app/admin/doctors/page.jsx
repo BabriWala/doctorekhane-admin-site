@@ -33,7 +33,7 @@ export default function DoctorsPage() {
   // Flatten doctors data
   const flattenedDoctors =
     doctors?.map((doc) => ({
-      _id: doc?._id,
+      id: doc?.id,
       firstName: doc?.personalDetails?.firstName || "",
       middleName: doc?.personalDetails?.middleName || "",
       lastName: doc?.personalDetails?.lastName || "",
@@ -123,7 +123,7 @@ export default function DoctorsPage() {
               </tr>
             ) : (
               flattenedDoctors.map((doc) => (
-                <tr key={doc._id} className="hover:bg-gray-50">
+                <tr key={doc.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                     {doc.firstName} {doc.middleName ? doc.middleName + " " : ""}
                     {doc.lastName}
@@ -144,12 +144,12 @@ export default function DoctorsPage() {
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
-                    {/* <Link href={`/admin/doctors/${doc._id}`}>
+                    {/* <Link href={`/admin/doctors/${doc.id}`}>
                       <Button variant="ghost" size="sm">
                         <Eye className="h-4 w-4" />
                       </Button>
                     </Link> */}
-                    <Link href={`/admin/doctors/${doc._id}/edit`}>
+                    <Link href={`/admin/doctors/${doc.id}/edit`}>
                       <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -176,7 +176,7 @@ export default function DoctorsPage() {
         onOpenChange={() => setDeleteDoctor(null)}
         title="Delete Doctor"
         description={`Are you sure you want to delete "${deleteDoctor?.firstName} ${deleteDoctor?.lastName}"? This action cannot be undone.`}
-        onConfirm={() => deleteMutation.mutate(deleteDoctor._id)}
+        onConfirm={() => deleteMutation.mutate(deleteDoctor.id)}
         loading={deleteMutation.isLoading}
       />
     </div>
