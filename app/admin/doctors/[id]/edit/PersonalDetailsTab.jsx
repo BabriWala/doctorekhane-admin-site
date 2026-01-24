@@ -60,7 +60,7 @@ export default function PersonalDetailsTab({ doctorId }) {
         }
       } catch (error) {
         toast.error(
-          error.response?.data?.message || "Failed to fetch doctor details"
+          error.response?.data?.message || "Failed to fetch doctor details",
         );
       }
     };
@@ -90,7 +90,7 @@ export default function PersonalDetailsTab({ doctorId }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label>First Name *</Label>
+              <Label>First Name</Label>
               <Input
                 {...register("firstName", {
                   required: "First Name is required",
@@ -110,7 +110,7 @@ export default function PersonalDetailsTab({ doctorId }) {
             </div>
 
             <div className="space-y-1">
-              <Label>Last Name *</Label>
+              <Label>Last Name</Label>
               <Input
                 {...register("lastName", { required: "Last Name is required" })}
                 disabled={loading}
@@ -123,7 +123,7 @@ export default function PersonalDetailsTab({ doctorId }) {
             </div>
 
             <div className="space-y-1">
-              <Label>Gender *</Label>
+              <Label>Gender</Label>
               <Select
                 value={watch("gender")}
                 onValueChange={(value) => setValue("gender", value)}
@@ -144,17 +144,17 @@ export default function PersonalDetailsTab({ doctorId }) {
             </div>
 
             <div className="space-y-1">
-              <Label>Date of Birth *</Label>
+              <Label>Date of Birth </Label>
               <Input type="date" {...register("dob")} disabled={loading} />
             </div>
 
             <div className="space-y-1">
-              <Label>Phone *</Label>
+              <Label>Phone</Label>
               <Input {...register("phone")} disabled={loading} />
             </div>
 
             <div className="space-y-1">
-              <Label>Email *</Label>
+              <Label>Email</Label>
               <Input type="email" {...register("email")} disabled={loading} />
             </div>
 

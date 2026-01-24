@@ -61,7 +61,7 @@ export default function CreateDoctorPage() {
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to create doctor");
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -135,13 +135,13 @@ export default function CreateDoctorPage() {
                 )}
               </div>
 
-              <div className="space-y-1">
+              {/* <div className="space-y-1">
                 <Label>Date of Birth *</Label>
                 <Input type="date" {...register("dob")} disabled={loading} />
                 {errors.dob && (
                   <p className="text-xs text-red-500">{errors.dob.message}</p>
                 )}
-              </div>
+              </div> */}
 
               <div className="space-y-1">
                 <Label>Phone *</Label>

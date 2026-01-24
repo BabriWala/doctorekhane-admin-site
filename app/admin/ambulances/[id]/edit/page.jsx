@@ -8,9 +8,10 @@ import ProfilePictureTab from "./ProfilePictureTab";
 import AddressTab from "./AddressTab";
 import ContactTab from "./ContactTab";
 import AvailabilityTab from "./AvailabilityTab";
+import { useParams } from "next/navigation";
 
-const BloodDonorEditPage = ({ params }) => {
-  const { id } = params;
+const BloodDonorEditPage = () => {
+  const { id } = useParams();
 
   return (
     <div className="p-4">

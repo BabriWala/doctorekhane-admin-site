@@ -9,9 +9,10 @@ import ImagesTab from "./ImagesTab";
 import AddressTab from "./AddressTab";
 import ContactTab from "./ContactTab";
 import DepartmentsTab from "./DepartmentsTab";
+import { useParams } from "next/navigation";
 
-const DoctorEditPage = ({ params }) => {
-  const { id } = params;
+const DoctorEditPage = () => {
+  const { id } = useParams();
 
   return (
     <div className="p-4">

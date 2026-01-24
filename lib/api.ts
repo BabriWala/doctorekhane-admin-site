@@ -4,7 +4,9 @@ import axios from "axios";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL ||
-  `${process.env.NEXT_PUBLIC_API_URL}/api`;
+  (process.env.NEXT_PUBLIC_API_URL
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api`
+    : "http://localhost:4002/api");
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -36,7 +38,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Refresh token if 401
@@ -51,9 +53,8 @@ api.interceptors.response.use(
     }
 
     if (!error.response) {
-      return Promise.reject({
-        response: { data: { message: "Network error. Try again." } },
-      });
+      error.message = error.message || "Network error. Try again.";
+      return Promise.reject(error); // ✅ keep original axios error
     }
 
     // If 401, try refresh
@@ -75,7 +76,7 @@ api.interceptors.response.use(
         const { data } = await api.post(
           "/auth/refresh-token",
           {},
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         if (!data?.accessToken) {
@@ -103,7 +104,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // Token helpers

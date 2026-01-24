@@ -43,7 +43,7 @@ export default function AmbulancePage() {
     },
     onError: (error) => {
       toast.error(
-        error.response?.data?.message || "Failed to delete ambulance"
+        error.response?.data?.message || "Failed to delete ambulance",
       );
     },
   });
@@ -152,7 +152,7 @@ export default function AmbulancePage() {
                       </Button>
                     </Link> */}
                     <Link href={`/admin/ambulances/${ambulance._id}/edit`}>
-                      <Button variant="ghost" size="sm">
+                      <Button size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>

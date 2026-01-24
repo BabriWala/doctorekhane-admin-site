@@ -11,10 +11,10 @@ import ExperienceTab from "./ExperienceTab";
 import SpecializationTab from "./SpecializationTab";
 import ProfessionalTab from "./ProfessionalTab";
 import ChambersTab from "./ChambersTab";
+import { useParams } from "next/navigation";
 
-const DoctorEditPage = ({ params }) => {
-  const { id } = params;
-
+export default function DoctorEditPageClient() {
+  const { id } = useParams();
   return (
     <div className="p-4">
       <Tabs defaultValue="personal-details" className="w-full">
@@ -56,6 +56,4 @@ const DoctorEditPage = ({ params }) => {
       </Tabs>
     </div>
   );
-};
-
-export default DoctorEditPage;
+}

@@ -39,6 +39,7 @@ export default function ProfessionalTab({ doctorId }) {
       department: "",
       field: "",
       consultationFee: "",
+      consultationFeeNew: "",
       status: "Active",
       order: 1,
       licenseNumber: "",
@@ -56,7 +57,7 @@ export default function ProfessionalTab({ doctorId }) {
         }
       } catch (error) {
         toast.error(
-          error.response?.data?.message || "Failed to fetch professional info"
+          error.response?.data?.message || "Failed to fetch professional info",
         );
       }
     };
@@ -71,7 +72,7 @@ export default function ProfessionalTab({ doctorId }) {
       toast.success("Professional info updated");
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Failed to update professional info"
+        error.response?.data?.message || "Failed to update professional info",
       );
     } finally {
       setLoading(false);
@@ -106,7 +107,15 @@ export default function ProfessionalTab({ doctorId }) {
               <Input {...register("field")} disabled={loading} />
             </div>
             <div className="space-y-1">
-              <Label>Consultation Fee</Label>
+              <Label>Consultation Fee 1st Visit</Label>
+              <Input
+                type="number"
+                {...register("consultationFeeNew")}
+                disabled={loading}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label>Consultation Fee 2nd Visit</Label>
               <Input
                 type="number"
                 {...register("consultationFee")}

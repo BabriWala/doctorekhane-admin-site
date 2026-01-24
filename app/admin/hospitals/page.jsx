@@ -156,7 +156,7 @@ export default function HospitalsPage() {
                       </Button>
                     </Link> */}
                     <Link href={`/admin/hospitals/${h._id}/edit`}>
-                      <Button variant="ghost" size="sm">
+                      <Button size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
