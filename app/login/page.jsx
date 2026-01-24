@@ -1,54 +1,65 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/auth"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-import { motion } from "framer-motion"
-import { toast } from "sonner"
+import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 export default function Login() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const { login } = useAuth()
-  const router = useRouter()
-
+  const { login } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const result = await login(email, password)
+    const result = await login(email, password);
 
     if (result.success) {
-      toast.success(`Welcome back, ${result.user.name}!`)
-      router.push("/admin")
+      toast.success(`Welcome back, ${result.user.name}!`);
+      router.push("/admin");
     } else {
-      setError(result.error)
+      setError(result.error);
     }
 
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
-  console.log("i am login page")
+  console.log("i am login page");
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Admin Login</CardTitle>
-            <CardDescription>Enter your credentials to access the admin panel</CardDescription>
+            <CardTitle className="text-2xl">Admin Login V2</CardTitle>
+            <CardDescription>
+              Enter your credentials to access the admin panel
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -90,5 +101,5 @@ export default function Login() {
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }

@@ -43,6 +43,6 @@ jobs:
             pnpm run build
 
             # Restart PM2 process
-            pm2 restart doctorekhane-admin
+            pm2 restart doctorekhane-admin-site
 
             echo "🚀 Deployment completed successfully!"
