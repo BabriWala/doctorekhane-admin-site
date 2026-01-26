@@ -28,6 +28,10 @@ export default function DoctorsPage() {
       });
       return response.data.data; // <-- FIXED
     },
+    // ✅ refetch when you come back to this page
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
   // Flatten doctors data
