@@ -43,9 +43,8 @@ export default function ContactTab({ ambulanceId }) {
           reset(res.data.ambulance.contact);
         }
       } catch (error) {
-
         toast.error(
-          error.response?.data?.message || "Failed to fetch contact info"
+          error.response?.data?.message || "Failed to fetch contact info",
         );
       }
     };
@@ -61,9 +60,8 @@ export default function ContactTab({ ambulanceId }) {
 
       reset(res.data.data.contact);
     } catch (error) {
-
       toast.error(
-        error.response?.data?.message || "Failed to update contact info"
+        error.response?.data?.message || "Failed to update contact info",
       );
     } finally {
       setLoading(false);
@@ -80,7 +78,7 @@ export default function ContactTab({ ambulanceId }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label>Phone *</Label>
+              <Label>Phone</Label>
               <Input
                 {...register("phone", { required: "Phone number is required" })}
                 disabled={loading}

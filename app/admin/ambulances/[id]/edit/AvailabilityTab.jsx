@@ -50,11 +50,9 @@ export default function AvailabilityTab({ ambulanceId }) {
           reset(data);
         }
       } catch (error) {
-
         toast.error(
-          error.response?.data?.message || "Failed to fetch availability info"
+          error.response?.data?.message || "Failed to fetch availability info",
         );
-
       }
     };
     fetchAvailability();
@@ -65,15 +63,12 @@ export default function AvailabilityTab({ ambulanceId }) {
     try {
       const res = await api.put(`/ambulance/${ambulanceId}/availability`, data);
 
-
       toast.success("Ambulance availability updated successfully"); // ✅ success toast
 
       reset(res.data.data.availability);
     } catch (error) {
-
-
       toast.error(
-        error.response?.data?.message || "Failed to update availability"
+        error.response?.data?.message || "Failed to update availability",
       );
     } finally {
       setLoading(false);
@@ -96,21 +91,21 @@ export default function AvailabilityTab({ ambulanceId }) {
               <select
                 {...register("isAvailable")}
                 disabled={loading}
-                className="border rounded px-2 py-1 w-full"
+                className="border rounded px-2 py-1 w-full bg-black"
               >
                 <option value={true}>Yes</option>
                 <option value={false}>No</option>
               </select>
             </div>
 
-            <div className="space-y-1">
+            {/* <div className="space-y-1">
               <Label>Last Service Date</Label>
               <Input
                 type="date"
                 {...register("lastServiceDate")}
                 disabled={loading}
               />
-            </div>
+            </div> */}
 
             <div className="md:col-span-2 space-y-1">
               <Label>Notes</Label>

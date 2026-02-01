@@ -46,7 +46,7 @@ export default function AddressTab({ ambulanceId }) {
         }
       } catch (error) {
         toast.error(
-          error.response?.data?.message || "Failed to fetch ambulance address"
+          error.response?.data?.message || "Failed to fetch ambulance address",
         );
       }
     };
@@ -58,15 +58,11 @@ export default function AddressTab({ ambulanceId }) {
     try {
       const res = await api.put(`/ambulance/${ambulanceId}/address`, data);
 
-
       toast.success("Ambulance address updated successfully"); // ✅ success toast
 
       reset(res.data.data.address);
     } catch (error) {
-
-      toast.error(
-        error.response?.data?.message || "Failed to update address"
-      );
+      toast.error(error.response?.data?.message || "Failed to update address");
     } finally {
       setLoading(false);
     }
@@ -81,8 +77,8 @@ export default function AddressTab({ ambulanceId }) {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <Label>City *</Label>
+            {/* <div className="space-y-1">
+              <Label>City</Label>
               <Input
                 {...register("city", { required: "City is required" })}
                 disabled={loading}
@@ -90,23 +86,23 @@ export default function AddressTab({ ambulanceId }) {
               {errors.city && (
                 <p className="text-xs text-red-500">{errors.city.message}</p>
               )}
-            </div>
-            <div className="space-y-1">
+            </div> */}
+            {/* <div className="space-y-1">
               <Label>Area</Label>
               <Input {...register("area")} disabled={loading} />
-            </div>
+            </div> */}
             <div className="space-y-1">
-              <Label>Address Line</Label>
-              <Input {...register("addressLine")} disabled={loading} />
+              <Label>Address</Label>
+              <Input {...register("address")} disabled={loading} />
             </div>
-            <div className="space-y-1">
+            {/* <div className="space-y-1">
               <Label>Latitude</Label>
               <Input {...register("latitude")} disabled={loading} />
             </div>
             <div className="space-y-1">
               <Label>Longitude</Label>
               <Input {...register("longitude")} disabled={loading} />
-            </div>
+            </div> */}
           </div>
 
           <Button type="submit" disabled={loading}>
