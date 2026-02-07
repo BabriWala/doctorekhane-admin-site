@@ -238,8 +238,8 @@ export default function AmbulancesPage() {
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
-                    <Link href={`/admin/ambulances/${a.id}/edit`}>
-                      <Button size="sm" variant="outline">
+                    <Link href={`/admin/ambulances/${a.id}/edit`} className="">
+                      <Button size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>

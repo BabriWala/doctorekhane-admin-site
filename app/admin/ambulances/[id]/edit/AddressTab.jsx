@@ -28,11 +28,7 @@ export default function AddressTab({ ambulanceId }) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      city: "",
-      area: "",
-      addressLine: "",
-      latitude: "",
-      longitude: "",
+      address: "",
     },
   });
 

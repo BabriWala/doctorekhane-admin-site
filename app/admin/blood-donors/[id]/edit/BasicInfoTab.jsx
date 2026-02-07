@@ -51,13 +51,12 @@ export default function BasicInfoTab({ donorId }) {
     const fetchDonor = async () => {
       try {
         const res = await api.get(`/blood-donor/${donorId}`);
-        if (res.data?.basicInfo) {
-          reset(res.data.basicInfo);
+        if (res.data?.donor?.basicInfo) {
+          reset(res.data.donor.basicInfo);
         }
       } catch (error) {
-
         toast.error(
-          error.response?.data?.message || "Failed to fetch donor info"
+          error.response?.data?.message || "Failed to fetch donor info",
         );
       }
     };
@@ -69,14 +68,10 @@ export default function BasicInfoTab({ donorId }) {
     try {
       await api.put(`/blood-donor/${donorId}/basic-info`, data);
 
-
       toast.success("Blood donor info updated successfully"); // ✅ success toast
-
     } catch (error) {
-
-
       toast.error(
-        error.response?.data?.message || "Failed to update donor info"
+        error.response?.data?.message || "Failed to update donor info",
       );
     } finally {
       setLoading(false);
@@ -176,7 +171,7 @@ export default function BasicInfoTab({ donorId }) {
                       <SelectItem key={bg} value={bg}>
                         {bg}
                       </SelectItem>
-                    )
+                    ),
                   )}
                 </SelectContent>
               </Select>

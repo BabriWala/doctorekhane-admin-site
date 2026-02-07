@@ -2,50 +2,81 @@
 //@ts-nocheck
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
-import api from "@/lib/api";
-import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Search, Edit, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import api from "@/lib/api";
 
 export default function BloodDonorPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [deleteDonor, setDeleteDonor] = useState(null);
+  const [search, setSearch] = useState(""); // client-side search (current page only)
+  const [address, setAddress] = useState("");
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [isActive, setIsActive] = useState(""); // "true" | "false" | ""
 
-  const queryClient = useQueryClient();
+  // ✅ pagination state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
-  // Fetch blood donors
-  const { data, isLoading } = useQuery({
-    queryKey: ["blood-donors", searchTerm],
+  // ✅ build params (ONLY those supported by backend)
+  const params = useMemo(() => {
+    const p = { page, limit }; // ✅ include pagination
+    // if (address.trim()) p.address = address.trim();
+    if (bloodGroup) p.bloodGroup = bloodGroup;
+    if (isActive) p.isActive = isActive; // backend converts to boolean
+    return p;
+  }, [address, bloodGroup, isActive, page, limit]);
+
+  const { data, isLoading, isFetching, error } = useQuery({
+    queryKey: ["blood-donors", params],
     queryFn: async () => {
-      const res = await api.get("/blood-donor", {
-        params: { search: searchTerm },
-      });
-      return res.data.donors; // API returns { count, donors }
+      const res = await api.get("/blood-donor", { params });
+      return res.data; // ✅ return full payload (donors + pagination)
     },
-    refetchOnMount: "always", // Always refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when tab/window regains focus
-    refetchOnReconnect: true, // Refetch if browser reconnects to network
+    refetchOnMount: "always",
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    keepPreviousData: true, // ✅ smoother pagination
   });
 
-  // Delete donor mutation
-  const deleteMutation = useMutation({
-    mutationFn: async (id) => await api.delete(`/blood-donor/${id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["blood-donors"]);
-      toast.success("Blood donor deleted successfully");
+  const pagination = data?.pagination || {
+    totalItems: 0,
+    totalPages: 1,
+    currentPage: page,
+    pageSize: limit,
+  };
 
-      setDeleteDonor(null);
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || "Failed to delete donor");
-    },
-  });
+  // ✅ map essential fields
+  const donors =
+    data?.donors?.map((d) => ({
+      id: d._id,
+      name: `${d?.basicInfo?.firstName || ""} ${d?.basicInfo?.lastName || ""}`.trim(),
+      bloodGroup: d?.basicInfo?.bloodGroup || "",
+      phone: d?.contact?.phone || "",
+      address: d?.address?.address || "",
+      isActive: d?.donationInfo?.isActive ?? false,
+    })) || [];
+
+  // ✅ client-side search (only within current page results)
+  const filteredDonors = useMemo(() => {
+    const s = search.trim().toLowerCase();
+    if (!s) return donors;
+
+    return donors.filter((d) => {
+      return (
+        d.name.toLowerCase().includes(s) ||
+        d.phone.toLowerCase().includes(s) ||
+        d.address.toLowerCase().includes(s) ||
+        d.bloodGroup.toLowerCase().includes(s)
+      );
+    });
+  }, [search, donors]);
+
+  // ✅ when any filter changes, reset to page 1
+  const resetToFirstPage = () => setPage(1);
 
   return (
     <div className="space-y-6">
@@ -53,8 +84,9 @@ export default function BloodDonorPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Blood Donors</h1>
-          <p className="text-gray-500">Manage registered blood donors</p>
+          <p className="text-gray-500">Search and manage blood donors</p>
         </div>
+
         <Button asChild>
           <Link
             href="/admin/blood-donors/create"
@@ -65,16 +97,84 @@ export default function BloodDonorPage() {
         </Button>
       </div>
 
-      {/* Search */}
-      <div className="flex items-center gap-4 mb-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+      {/* Filters */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        {/* Search (client-side on current page only) */}
+        <div className="relative md:col-span-2">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search donors by name or city..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
+            placeholder="Search name / address / phone (current page)"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
+        </div>
+
+        {/* address */}
+        {/* <Input
+          placeholder="address (ex: Dhaka)"
+          value={address}
+          onChange={(e) => {
+            setAddress(e.target.value);
+            resetToFirstPage();
+          }}
+        /> */}
+
+        {/* Blood Group */}
+        <select
+          className="border rounded-md px-3 py-2 text-sm bg-white text-black dark:bg-gray-900 dark:text-white"
+          value={bloodGroup}
+          onChange={(e) => {
+            setBloodGroup(e.target.value);
+            resetToFirstPage();
+          }}
+        >
+          <option value="">All Groups</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+
+        {/* Active */}
+        <select
+          className="border rounded-md px-3 py-2 text-sm bg-white text-black dark:bg-gray-900 dark:text-white"
+          value={isActive}
+          onChange={(e) => {
+            setIsActive(e.target.value);
+            resetToFirstPage();
+          }}
+        >
+          <option value="">All</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+
+      {/* Status line */}
+      <div className="flex items-center justify-between text-sm text-gray-500">
+        <div>{isFetching ? "Refreshing..." : ""}</div>
+
+        {/* Page size */}
+        <div className="flex items-center gap-2">
+          <span>Rows:</span>
+          <select
+            className="border rounded-md px-2 py-1 bg-white text-black dark:bg-gray-900 dark:text-white"
+            value={limit}
+            onChange={(e) => {
+              setLimit(Number(e.target.value));
+              setPage(1);
+            }}
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
         </div>
       </div>
 
@@ -83,26 +183,27 @@ export default function BloodDonorPage() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Blood Group
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                City
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Phone
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Address
+              </th>
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
                 Status
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
                 Actions
               </th>
             </tr>
           </thead>
+
           <tbody className="bg-white divide-y divide-gray-200">
             {isLoading ? (
               <tr>
@@ -110,56 +211,39 @@ export default function BloodDonorPage() {
                   Loading...
                 </td>
               </tr>
-            ) : data?.length === 0 ? (
+            ) : error ? (
+              <tr>
+                <td colSpan={6} className="text-center py-4 text-red-500">
+                  Failed to load donors
+                </td>
+              </tr>
+            ) : filteredDonors.length === 0 ? (
               <tr>
                 <td colSpan={6} className="text-center py-4 text-gray-500">
                   No donors found.
                 </td>
               </tr>
             ) : (
-              data.map((donor) => (
-                <tr key={donor._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    {donor.basicInfo?.firstName}
-                    {donor.basicInfo?.lastName}
+              filteredDonors.map((d) => (
+                <tr key={d.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    {d.name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                    {donor.basicInfo?.bloodGroup}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                    {donor.address?.city}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                    {donor.contact?.phone}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge
-                      variant={
-                        donor.donationInfo?.isActive ? "default" : "secondary"
-                      }
-                    >
-                      {donor.donationInfo?.isActive ? "Active" : "Inactive"}
+                  <td className="px-6 py-4 text-gray-600">{d.bloodGroup}</td>
+                  <td className="px-6 py-4 text-gray-600">{d.phone}</td>
+                  <td className="px-6 py-4 text-gray-600">{d.address}</td>
+                  <td className="px-6 py-4 text-center">
+                    <Badge variant={d.isActive ? "default" : "secondary"}>
+                      {d.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
-                    {/* <Link href={`/admin/blood-donors/${donor._id}`}>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </Link> */}
-                    <Link href={`/admin/blood-donors/${donor._id}/edit`}>
+
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <Link href={`/admin/blood-donors/${d.id}/edit`}>
                       <Button size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
-                    {/* <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDeleteDonor(donor)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button> */}
                   </td>
                 </tr>
               ))
@@ -168,15 +252,59 @@ export default function BloodDonorPage() {
         </table>
       </div>
 
-      {/* Delete confirmation */}
-      <ConfirmDialog
-        open={!!deleteDonor}
-        onOpenChange={() => setDeleteDonor(null)}
-        title="Delete Blood Donor"
-        description={`Are you sure you want to delete "${deleteDonor?.basicInfo?.name}"? This action cannot be undone.`}
-        onConfirm={() => deleteMutation.mutate(deleteDonor._id)}
-        loading={deleteMutation.isLoading}
-      />
+      {/* ✅ Pagination Footer */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="text-sm text-gray-600">
+          Total: <span className="font-medium">{pagination.totalItems}</span> •
+          Page <span className="font-medium">{pagination.currentPage}</span> of{" "}
+          <span className="font-medium">{pagination.totalPages}</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={pagination.currentPage <= 1}
+          >
+            Prev
+          </Button>
+
+          {/* simple page numbers (max 5) */}
+          {Array.from(
+            { length: Math.min(5, pagination.totalPages) },
+            (_, i) => {
+              const start = Math.max(1, pagination.currentPage - 2);
+              const pageNum = start + i;
+              if (pageNum > pagination.totalPages) return null;
+
+              return (
+                <Button
+                  key={pageNum}
+                  size="sm"
+                  variant={
+                    pageNum === pagination.currentPage ? "default" : "outline"
+                  }
+                  onClick={() => setPage(pageNum)}
+                >
+                  {pageNum}
+                </Button>
+              );
+            },
+          )}
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setPage((p) => Math.min(pagination.totalPages, p + 1))
+            }
+            disabled={pagination.currentPage >= pagination.totalPages}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

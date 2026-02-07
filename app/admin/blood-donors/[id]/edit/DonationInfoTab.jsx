@@ -40,18 +40,18 @@ export default function DonationInfoTab({ donorId }) {
     const fetchDonationInfo = async () => {
       try {
         const res = await api.get(`/blood-donor/${donorId}`);
-        if (res.data?.donationInfo) {
+        if (res.data?.donor?.donationInfo) {
           const data = {
-            ...res.data.donationInfo,
-            lastDonationDate: res.data.donationInfo.lastDonationDate
-              ? res.data.donationInfo.lastDonationDate.split("T")[0]
+            ...res.data.donor.donationInfo,
+            lastDonationDate: res.data.donor.donationInfo.lastDonationDate
+              ? res.data.donor.donationInfo.lastDonationDate.split("T")[0]
               : "",
           };
           reset(data);
         }
       } catch (error) {
         toast.error(
-          error.response?.data?.message || "Failed to fetch donation info"
+          error.response?.data?.message || "Failed to fetch donation info",
         );
       }
     };
@@ -67,10 +67,8 @@ export default function DonationInfoTab({ donorId }) {
 
       reset(res.data.donationInfo);
     } catch (error) {
-
-
       toast.error(
-        error.response?.data?.message || "Failed to update donation info"
+        error.response?.data?.message || "Failed to update donation info",
       );
     } finally {
       setLoading(false);

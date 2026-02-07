@@ -28,11 +28,7 @@ export default function AddressTab({ donorId }) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      street: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "Bangladesh",
+      address: "",
     },
   });
 
@@ -41,12 +37,12 @@ export default function AddressTab({ donorId }) {
     const fetchDonor = async () => {
       try {
         const res = await api.get(`/blood-donor/${donorId}`);
-        if (res.data?.address) {
-          reset(res.data.address);
+        if (res.data?.donor?.address) {
+          reset(res.data?.donor?.address);
         }
       } catch (error) {
         toast.error(
-          error.response?.data?.message || "Failed to fetch donor address"
+          error.response?.data?.message || "Failed to fetch donor address",
         );
       }
     };
@@ -62,11 +58,7 @@ export default function AddressTab({ donorId }) {
 
       reset(res.data.address);
     } catch (error) {
-
-
-      toast.error(
-        error.response?.data?.message || "Failed to update address"
-      );
+      toast.error(error.response?.data?.message || "Failed to update address");
     } finally {
       setLoading(false);
     }
@@ -81,7 +73,7 @@ export default function AddressTab({ donorId }) {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1">
+            {/* <div className="space-y-1">
               <Label>Street</Label>
               <Input {...register("street")} disabled={loading} />
             </div>
@@ -106,6 +98,10 @@ export default function AddressTab({ donorId }) {
             <div className="space-y-1">
               <Label>Postal Code</Label>
               <Input {...register("postalCode")} disabled={loading} />
+            </div> */}
+            <div className="space-y-1">
+              <Label>Address</Label>
+              <Input {...register("address")} disabled={loading} />
             </div>
           </div>
 

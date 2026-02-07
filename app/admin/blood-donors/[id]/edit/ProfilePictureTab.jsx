@@ -24,13 +24,13 @@ export default function ProfilePictureTab({ donorId }) {
     const fetchDonor = async () => {
       try {
         const res = await api.get(`/blood-donor/${donorId}`);
-        if (res.data?.basicInfo?.profilePicture) {
-          setProfilePicture(res.data.basicInfo.profilePicture);
+        if (res.data?.donor?.basicInfo?.profilePicture) {
+          setProfilePicture(res.data.donor.basicInfo.profilePicture);
         }
       } catch (error) {
         toast.error(
           error.response?.data?.message ||
-            "Failed to fetch donor profile picture"
+            "Failed to fetch donor profile picture",
         );
       }
     };
@@ -62,7 +62,7 @@ export default function ProfilePictureTab({ donorId }) {
       const res = await api.put(
         `/blood-donor/${donorId}/profile-picture`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
 
       setProfilePicture(res.data.profilePicture);
@@ -71,7 +71,7 @@ export default function ProfilePictureTab({ donorId }) {
       toast.success("Profile picture updated successfully"); // ✅ success toast
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Failed to update profile picture"
+        error.response?.data?.message || "Failed to update profile picture",
       );
     } finally {
       setLoading(false);

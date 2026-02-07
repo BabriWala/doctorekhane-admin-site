@@ -39,13 +39,12 @@ export default function ContactTab({ donorId }) {
     const fetchDonor = async () => {
       try {
         const res = await api.get(`/blood-donor/${donorId}`);
-        if (res.data?.contact) {
-          reset(res.data.contact);
+        if (res.data?.donor?.contact) {
+          reset(res.data.donor.contact);
         }
       } catch (error) {
-
         toast.error(
-          error.response?.data?.message || "Failed to fetch contact info"
+          error.response?.data?.message || "Failed to fetch contact info",
         );
       }
     };
@@ -57,15 +56,12 @@ export default function ContactTab({ donorId }) {
     try {
       const res = await api.put(`/blood-donor/${donorId}/contact`, data);
 
-
       toast.success("Blood donor contact updated successfully"); // ✅ success toast
 
       reset(res.data.contact);
     } catch (error) {
-
-
       toast.error(
-        error.response?.data?.message || "Failed to update contact info"
+        error.response?.data?.message || "Failed to update contact info",
       );
     } finally {
       setLoading(false);
