@@ -46,7 +46,7 @@ export default function EducationTab({ doctorId }) {
         }
       } catch (error) {
         toast.error(
-          error.response?.data?.message || "Failed to fetch education"
+          error.response?.data?.message || "Failed to fetch education",
         );
       }
     };
@@ -92,14 +92,12 @@ export default function EducationTab({ doctorId }) {
     try {
       await api.delete(`/doctor/${doctorId}/education/${educationId}`);
 
-
       toast.success("Education deleted");
-
 
       setEducationList((prev) => prev.filter((edu) => edu._id !== educationId));
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Failed to delete education"
+        error.response?.data?.message || "Failed to delete education",
       );
     }
   };
@@ -129,7 +127,8 @@ export default function EducationTab({ doctorId }) {
             <div className="space-y-1">
               <Label>Degree</Label>
               <Input
-                {...register("degree", { required: true })}
+                // {...register("degree", { required: true })}
+                {...register("degree")}
                 disabled={loading}
               />
               {errors.degree && (
@@ -139,7 +138,8 @@ export default function EducationTab({ doctorId }) {
             <div className="space-y-1">
               <Label>Institution</Label>
               <Input
-                {...register("institution", { required: true })}
+                // {...register("institution", { required: true })}
+                {...register("institution")}
                 disabled={loading}
               />
               {errors.institution && (
@@ -150,7 +150,8 @@ export default function EducationTab({ doctorId }) {
               <Label>Year of Completion</Label>
               <Input
                 type="number"
-                {...register("yearOfCompletion", { required: true })}
+                // {...register("yearOfCompletion", { required: true })}
+                {...register("yearOfCompletion")}
                 disabled={loading}
               />
               {errors.yearOfCompletion && (
@@ -163,8 +164,8 @@ export default function EducationTab({ doctorId }) {
             {loading
               ? "Saving..."
               : editingId
-              ? "Update Education"
-              : "Add Education"}
+                ? "Update Education"
+                : "Add Education"}
           </Button>
           {editingId && (
             <Button
