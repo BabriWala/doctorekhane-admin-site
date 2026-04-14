@@ -38,7 +38,7 @@ export default function DoctorsPage() {
   // Flatten doctors data
   const flattenedDoctors =
     doctors?.map((doc) => ({
-      id: doc?._id,
+      id: doc?.id,
       firstName: doc?.personalDetails?.firstName || "",
       middleName: doc?.personalDetails?.middleName || "",
       lastName: doc?.personalDetails?.lastName || "",
