@@ -32,6 +32,8 @@ export default function ProfessionalTab({ doctorId }) {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -47,13 +49,19 @@ export default function ProfessionalTab({ doctorId }) {
     },
   });
 
+  const statusValue = watch("status");
+
   // Fetch doctor's professional info
   useEffect(() => {
     const fetchProfessional = async () => {
       try {
         const res = await api.get(`/doctor/${doctorId}`);
+
         if (res.data?.professional) {
-          reset(res.data.professional);
+          reset({
+            ...res.data.professional,
+            status: res.data.professional?.status || "Active",
+          });
         }
       } catch (error) {
         toast.error(
@@ -61,14 +69,14 @@ export default function ProfessionalTab({ doctorId }) {
         );
       }
     };
+
     fetchProfessional();
-  }, [doctorId, reset, toast]);
+  }, [doctorId, reset]);
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       await api.put(`/doctor/${doctorId}/professional`, data);
-
       toast.success("Professional info updated");
     } catch (error) {
       toast.error(
@@ -85,9 +93,11 @@ export default function ProfessionalTab({ doctorId }) {
         <CardTitle>Professional Info</CardTitle>
         <CardDescription>Update doctor’s professional details</CardDescription>
       </CardHeader>
+
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Position */}
             <div className="space-y-1">
               <Label>Position</Label>
               <Input
@@ -98,14 +108,20 @@ export default function ProfessionalTab({ doctorId }) {
                 <p className="text-red-500 text-sm">Required</p>
               )}
             </div>
+
+            {/* Department */}
             <div className="space-y-1">
               <Label>Department</Label>
               <Input {...register("department")} disabled={loading} />
             </div>
+
+            {/* Field */}
             <div className="space-y-1">
               <Label>Field</Label>
               <Input {...register("field")} disabled={loading} />
             </div>
+
+            {/* Consultation Fee New */}
             <div className="space-y-1">
               <Label>Consultation Fee 1st Visit</Label>
               <Input
@@ -114,6 +130,8 @@ export default function ProfessionalTab({ doctorId }) {
                 disabled={loading}
               />
             </div>
+
+            {/* Consultation Fee Old */}
             <div className="space-y-1">
               <Label>Consultation Fee 2nd Visit</Label>
               <Input
@@ -122,12 +140,14 @@ export default function ProfessionalTab({ doctorId }) {
                 disabled={loading}
               />
             </div>
+
+            {/* ✅ FIXED STATUS SELECT */}
             <div className="space-y-1">
               <Label>Status</Label>
               <Select
                 disabled={loading}
-                defaultValue="Active"
-                {...register("status")}
+                value={statusValue}
+                onValueChange={(value) => setValue("status", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Status" />
@@ -140,14 +160,20 @@ export default function ProfessionalTab({ doctorId }) {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Order */}
             <div className="space-y-1">
               <Label>Order</Label>
               <Input type="number" {...register("order")} disabled={loading} />
             </div>
+
+            {/* License */}
             <div className="space-y-1">
               <Label>License Number</Label>
               <Input {...register("licenseNumber")} disabled={loading} />
             </div>
+
+            {/* NID */}
             <div className="space-y-1">
               <Label>NID Number</Label>
               <Input {...register("nidNumber")} disabled={loading} />
