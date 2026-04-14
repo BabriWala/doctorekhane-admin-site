@@ -19,16 +19,17 @@ export default function DoctorsPage() {
 
   const queryClient = useQueryClient();
 
-  // Fetch doctors
   const { data: doctors, isLoading } = useQuery({
     queryKey: ["doctors", searchTerm],
     queryFn: async () => {
       const response = await api.get("/doctor", {
-        params: { search: searchTerm },
+        params: {
+          search: searchTerm,
+          admin: true, // 🔥 ADD THIS
+        },
       });
-      return response.data.data; // <-- FIXED
+      return response.data.data;
     },
-    // ✅ refetch when you come back to this page
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
     staleTime: 0,
