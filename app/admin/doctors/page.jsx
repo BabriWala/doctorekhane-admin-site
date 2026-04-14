@@ -34,11 +34,11 @@ export default function DoctorsPage() {
     refetchOnWindowFocus: true,
     staleTime: 0,
   });
-
+  console.log(doctors);
   // Flatten doctors data
   const flattenedDoctors =
     doctors?.map((doc) => ({
-      id: doc?.id,
+      id: doc?._id,
       firstName: doc?.personalDetails?.firstName || "",
       middleName: doc?.personalDetails?.middleName || "",
       lastName: doc?.personalDetails?.lastName || "",
