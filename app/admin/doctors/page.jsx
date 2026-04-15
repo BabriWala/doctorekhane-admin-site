@@ -44,7 +44,7 @@ export default function DoctorsPage() {
       lastName: doc?.personalDetails?.lastName || "",
       email: doc?.personalDetails?.email || "",
       phone: doc?.personalDetails?.phone || "",
-      status: doc?.status || "N/A",
+      status: doc?.professional?.status || "N/A",
     })) || [];
 
   // Delete doctor mutation
@@ -142,10 +142,10 @@ export default function DoctorsPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Badge
                       variant={
-                        doc.status === "active" ? "default" : "secondary"
+                        doc?.status === "Active" ? "default" : "secondary"
                       }
                     >
-                      {doc.status}
+                      {doc?.status}
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
