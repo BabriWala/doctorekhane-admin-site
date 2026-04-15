@@ -18,10 +18,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
 export default function ExperienceTab({ doctorId }) {
   const [loading, setLoading] = useState(false);
   const [experienceList, setExperienceList] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const {
     register,
@@ -38,24 +51,21 @@ export default function ExperienceTab({ doctorId }) {
     },
   });
 
-  // Fetch doctor’s experience
+  // Fetch
   useEffect(() => {
     const fetchExperience = async () => {
       try {
         const res = await api.get(`/doctor/${doctorId}`);
-        if (res.data?.experience) {
-          setExperienceList(res.data.experience);
-        }
-      } catch (error) {
-        toast.error(
-          error.response?.data?.message || "Failed to fetch experience"
-        );
+        setExperienceList(res.data?.experience || []);
+      } catch {
+        toast.error("Failed to fetch experience");
       }
     };
-    fetchExperience();
-  }, [doctorId, toast]);
 
-  // Add or Update experience
+    fetchExperience();
+  }, [doctorId]);
+
+  // Add / Update
   const onSubmit = async (data) => {
     setLoading(true);
     try {
@@ -64,46 +74,38 @@ export default function ExperienceTab({ doctorId }) {
         toast.success("Experience updated");
       } else {
         await api.post(`/doctor/${doctorId}/experience`, data);
-
         toast.success("Experience added");
       }
 
-      // Refresh list
       const res = await api.get(`/doctor/${doctorId}`);
       setExperienceList(res.data.experience);
 
-      reset({
-        hospitalName: "",
-        role: "",
-        years: "",
-        from: "",
-        to: "",
-      });
+      reset();
       setEditingId(null);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to save experience");
+    } catch {
+      toast.error("Failed to save experience");
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete experience
-  const handleDelete = async (experienceId) => {
+  // Delete
+  const handleDelete = async (id) => {
+    setDeleteLoading(true);
     try {
-      await api.delete(`/doctor/${doctorId}/experience/${experienceId}`);
+      await api.delete(`/doctor/${doctorId}/experience/${id}`);
+
       toast.success("Experience deleted");
 
-      setExperienceList((prev) =>
-        prev.filter((exp) => exp._id !== experienceId)
-      );
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to delete experience"
-      );
+      setExperienceList((prev) => prev.filter((exp) => exp._id !== id));
+    } catch {
+      toast.error("Failed to delete experience");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
-  // Edit experience
+  // Edit
   const handleEdit = (exp) => {
     reset({
       hospitalName: exp.hospitalName,
@@ -119,48 +121,36 @@ export default function ExperienceTab({ doctorId }) {
     <Card>
       <CardHeader>
         <CardTitle>Experience</CardTitle>
-        <CardDescription>
-          Manage doctor’s work experience (add, edit, delete)
-        </CardDescription>
+        <CardDescription>Manage doctor’s work experience</CardDescription>
       </CardHeader>
+
       <CardContent>
-        {/* Form */}
+        {/* FORM */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-1">
+            <div>
               <Label>Hospital Name</Label>
-              <Input
-                {...register("hospitalName", { required: true })}
-                disabled={loading}
-              />
-              {errors.hospitalName && (
-                <p className="text-red-500 text-sm">Required</p>
-              )}
+              <Input {...register("hospitalName", { required: true })} />
             </div>
-            <div className="space-y-1">
+
+            <div>
               <Label>Role</Label>
-              <Input
-                {...register("role", { required: true })}
-                disabled={loading}
-              />
-              {errors.role && <p className="text-red-500 text-sm">Required</p>}
+              <Input {...register("role", { required: true })} />
             </div>
-            <div className="space-y-1">
+
+            <div>
               <Label>Years</Label>
-              <Input
-                type="number"
-                {...register("years", { required: true })}
-                disabled={loading}
-              />
-              {errors.years && <p className="text-red-500 text-sm">Required</p>}
+              <Input type="number" {...register("years", { required: true })} />
             </div>
-            <div className="space-y-1">
+
+            <div>
               <Label>From</Label>
-              <Input type="date" {...register("from")} disabled={loading} />
+              <Input type="date" {...register("from")} />
             </div>
-            <div className="space-y-1">
+
+            <div>
               <Label>To</Label>
-              <Input type="date" {...register("to")} disabled={loading} />
+              <Input type="date" {...register("to")} />
             </div>
           </div>
 
@@ -168,21 +158,16 @@ export default function ExperienceTab({ doctorId }) {
             {loading
               ? "Saving..."
               : editingId
-              ? "Update Experience"
-              : "Add Experience"}
+                ? "Update Experience"
+                : "Add Experience"}
           </Button>
+
           {editingId && (
             <Button
               type="button"
               variant="outline"
               onClick={() => {
-                reset({
-                  hospitalName: "",
-                  role: "",
-                  years: "",
-                  from: "",
-                  to: "",
-                });
+                reset();
                 setEditingId(null);
               }}
             >
@@ -191,7 +176,7 @@ export default function ExperienceTab({ doctorId }) {
           )}
         </form>
 
-        {/* List */}
+        {/* LIST */}
         <div className="space-y-4">
           {experienceList.length === 0 ? (
             <p className="text-gray-500">No experience records yet.</p>
@@ -199,7 +184,7 @@ export default function ExperienceTab({ doctorId }) {
             experienceList.map((exp) => (
               <div
                 key={exp._id}
-                className="flex items-center justify-between border p-3 rounded-lg"
+                className="flex justify-between border p-3 rounded-lg"
               >
                 <div>
                   <p className="font-medium">{exp.hospitalName}</p>
@@ -208,12 +193,14 @@ export default function ExperienceTab({ doctorId }) {
                   </p>
                   {exp.from && (
                     <p className="text-xs text-gray-500">
-                      {exp.from?.split("T")[0]} →{" "}
+                      {exp.from.split("T")[0]} →{" "}
                       {exp.to ? exp.to.split("T")[0] : "Present"}
                     </p>
                   )}
                 </div>
+
                 <div className="flex gap-2">
+                  {/* EDIT */}
                   <Button
                     variant="outline"
                     size="sm"
@@ -221,13 +208,37 @@ export default function ExperienceTab({ doctorId }) {
                   >
                     Edit
                   </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(exp._id)}
-                  >
-                    Delete
-                  </Button>
+
+                  {/* DELETE CONFIRM */}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Experience</AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this experience? This
+                          action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                        <AlertDialogAction
+                          onClick={() => handleDelete(exp._id)}
+                          disabled={deleteLoading}
+                        >
+                          {deleteLoading ? "Deleting..." : "Delete"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))

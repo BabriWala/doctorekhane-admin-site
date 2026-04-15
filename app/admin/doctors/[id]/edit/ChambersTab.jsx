@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+
 import {
   Select,
   SelectContent,
@@ -25,10 +26,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
 export default function ChambersTab({ doctorId }) {
   const [loading, setLoading] = useState(false);
   const [chambers, setChambers] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const {
     register,
@@ -53,107 +67,100 @@ export default function ChambersTab({ doctorId }) {
     },
   });
 
-  // Fetch chambers
+  // Fetch
   useEffect(() => {
     const fetchChambers = async () => {
       try {
         const res = await api.get(`/doctor/${doctorId}`);
-        if (res.data?.chambers) {
-          setChambers(res.data.chambers);
-        }
-      } catch (error) {
-        toast.error(
-          error.response?.data?.message || "Failed to fetch chambers"
-        );
+        setChambers(res.data?.chambers || []);
+      } catch {
+        toast.error("Failed to fetch chambers");
       }
     };
-    fetchChambers();
-  }, [doctorId, toast]);
 
-  // Add or update chamber
+    fetchChambers();
+  }, [doctorId]);
+
+  // Add / Update
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       if (editingId) {
         await api.put(`/doctor/${doctorId}/chamber/${editingId}`, data);
-
-        toast.success("AChamber updated");
+        toast.success("Chamber updated");
       } else {
         await api.post(`/doctor/${doctorId}/chamber`, data);
-
         toast.success("Chamber added");
       }
 
-      // Refresh list
       const res = await api.get(`/doctor/${doctorId}`);
       setChambers(res.data.chambers);
 
       reset();
       setEditingId(null);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to save chamber");
+    } catch {
+      toast.error("Failed to save chamber");
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete chamber
-  const handleDelete = async (chamberId) => {
+  // Delete
+  const handleDelete = async (id) => {
+    setDeleteLoading(true);
     try {
-      await api.delete(`/doctor/${doctorId}/chamber/${chamberId}`);
+      await api.delete(`/doctor/${doctorId}/chamber/${id}`);
+
       toast.success("Chamber deleted");
 
-      setChambers((prev) => prev.filter((c) => c._id !== chamberId));
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to delete chamber");
+      setChambers((prev) => prev.filter((c) => c._id !== id));
+    } catch {
+      toast.error("Failed to delete chamber");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
-  // Edit chamber
-  const handleEdit = (chamber) => {
+  // Edit
+  const handleEdit = (c) => {
     reset({
-      chamberName: chamber.chamberName || "",
-      contactNumber: chamber.contactNumber || "",
-      day: chamber.day || "",
-      from: chamber.from || "",
-      to: chamber.to || "",
+      chamberName: c.chamberName || "",
+      contactNumber: c.contactNumber || "",
+      day: c.day || "",
+      from: c.from || "",
+      to: c.to || "",
       address: {
-        street: chamber.address?.street || "",
-        city: chamber.address?.city || "",
-        state: chamber.address?.state || "",
-        country: chamber.address?.country || "",
-        zip: chamber.address?.zip || "",
+        street: c.address?.street || "",
+        city: c.address?.city || "",
+        state: c.address?.state || "",
+        country: c.address?.country || "",
+        zip: c.address?.zip || "",
       },
     });
-    setEditingId(chamber._id);
+    setEditingId(c._id);
   };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Chambers</CardTitle>
-        <CardDescription>
-          Manage doctor’s chambers (add, edit, delete)
-        </CardDescription>
+        <CardDescription>Manage doctor’s chambers</CardDescription>
       </CardHeader>
+
       <CardContent>
-        {/* Form */}
+        {/* FORM */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Chamber Name</Label>
-              <Input
-                {...register("chamberName", { required: true })}
-                disabled={loading}
-              />
-              {errors.chamberName && (
-                <p className="text-red-500 text-sm">Required</p>
-              )}
+              <Input {...register("chamberName", { required: true })} />
             </div>
+
             <div>
               <Label>Contact Number</Label>
-              <Input {...register("contactNumber")} disabled={loading} />
+              <Input {...register("contactNumber")} />
             </div>
+
             <div>
               <Label>Day</Label>
               <Controller
@@ -161,11 +168,7 @@ export default function ChambersTab({ doctorId }) {
                 name="day"
                 rules={{ required: true }}
                 render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={loading}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Day" />
                     </SelectTrigger>
@@ -187,43 +190,41 @@ export default function ChambersTab({ doctorId }) {
                   </Select>
                 )}
               />
-              {errors.day && <p className="text-red-500 text-sm">Required</p>}
             </div>
+
             <div>
               <Label>From</Label>
-              <Input
-                type="time"
-                {...register("from", { required: true })}
-                disabled={loading}
-              />
+              <Input type="time" {...register("from", { required: true })} />
             </div>
+
             <div>
               <Label>To</Label>
-              <Input
-                type="time"
-                {...register("to", { required: true })}
-                disabled={loading}
-              />
+              <Input type="time" {...register("to", { required: true })} />
             </div>
+
             <div>
               <Label>Street</Label>
-              <Input {...register("address.street")} disabled={loading} />
+              <Input {...register("address.street")} />
             </div>
+
             <div>
               <Label>City</Label>
-              <Input {...register("address.city")} disabled={loading} />
+              <Input {...register("address.city")} />
             </div>
+
             <div>
               <Label>State</Label>
-              <Input {...register("address.state")} disabled={loading} />
+              <Input {...register("address.state")} />
             </div>
+
             <div>
               <Label>Country</Label>
-              <Input {...register("address.country")} disabled={loading} />
+              <Input {...register("address.country")} />
             </div>
+
             <div>
               <Label>Zip</Label>
-              <Input {...register("address.zip")} disabled={loading} />
+              <Input {...register("address.zip")} />
             </div>
           </div>
 
@@ -231,9 +232,10 @@ export default function ChambersTab({ doctorId }) {
             {loading
               ? "Saving..."
               : editingId
-              ? "Update Chamber"
-              : "Add Chamber"}
+                ? "Update Chamber"
+                : "Add Chamber"}
           </Button>
+
           {editingId && (
             <Button
               type="button"
@@ -248,7 +250,7 @@ export default function ChambersTab({ doctorId }) {
           )}
         </form>
 
-        {/* List */}
+        {/* LIST */}
         <div className="space-y-4">
           {chambers.length === 0 ? (
             <p className="text-gray-500">No chambers yet.</p>
@@ -256,7 +258,7 @@ export default function ChambersTab({ doctorId }) {
             chambers.map((c) => (
               <div
                 key={c._id}
-                className="flex items-center justify-between border p-3 rounded-lg"
+                className="flex justify-between border p-3 rounded-lg"
               >
                 <div>
                   <p className="font-medium">{c.chamberName}</p>
@@ -267,7 +269,9 @@ export default function ChambersTab({ doctorId }) {
                     {c.address?.street}, {c.address?.city}, {c.address?.country}
                   </p>
                 </div>
+
                 <div className="flex gap-2">
+                  {/* EDIT */}
                   <Button
                     variant="outline"
                     size="sm"
@@ -275,13 +279,37 @@ export default function ChambersTab({ doctorId }) {
                   >
                     Edit
                   </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(c._id)}
-                  >
-                    Delete
-                  </Button>
+
+                  {/* DELETE CONFIRM */}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Chamber</AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this chamber? This
+                          action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                        <AlertDialogAction
+                          onClick={() => handleDelete(c._id)}
+                          disabled={deleteLoading}
+                        >
+                          {deleteLoading ? "Deleting..." : "Delete"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))

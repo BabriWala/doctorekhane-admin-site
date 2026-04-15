@@ -18,10 +18,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
 export default function EducationTab({ doctorId }) {
   const [loading, setLoading] = useState(false);
   const [educationList, setEducationList] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const {
     register,
@@ -36,73 +49,61 @@ export default function EducationTab({ doctorId }) {
     },
   });
 
-  // Fetch doctor’s education
+  // Fetch education
   useEffect(() => {
     const fetchEducation = async () => {
       try {
         const res = await api.get(`/doctor/${doctorId}`);
-        if (res.data?.education) {
-          setEducationList(res.data.education);
-        }
+        setEducationList(res.data?.education || []);
       } catch (error) {
-        toast.error(
-          error.response?.data?.message || "Failed to fetch education",
-        );
+        toast.error("Failed to fetch education");
       }
     };
-    fetchEducation();
-  }, [doctorId, toast]);
 
-  // Submit handler
+    fetchEducation();
+  }, [doctorId]);
+
+  // Add / Update
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       if (editingId) {
-        // Update
         await api.put(`/doctor/${doctorId}/education/${editingId}`, data);
-
         toast.success("Education updated");
       } else {
-        // Add
         await api.post(`/doctor/${doctorId}/education`, data);
-
         toast.success("Education added");
       }
 
-      // Refresh list
       const res = await api.get(`/doctor/${doctorId}`);
       setEducationList(res.data.education);
 
-      // Reset with empty values ✅
-      reset({
-        degree: "",
-        institution: "",
-        yearOfCompletion: "",
-      });
+      reset();
       setEditingId(null);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to save education");
+      toast.error("Failed to save education");
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete education
-  const handleDelete = async (educationId) => {
+  // Delete
+  const handleDelete = async (id) => {
+    setDeleteLoading(true);
     try {
-      await api.delete(`/doctor/${doctorId}/education/${educationId}`);
+      await api.delete(`/doctor/${doctorId}/education/${id}`);
 
       toast.success("Education deleted");
 
-      setEducationList((prev) => prev.filter((edu) => edu._id !== educationId));
+      setEducationList((prev) => prev.filter((edu) => edu._id !== id));
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to delete education",
-      );
+      toast.error("Failed to delete education");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
-  // Edit handler
+  // Edit
   const handleEdit = (edu) => {
     reset({
       degree: edu.degree,
@@ -116,47 +117,30 @@ export default function EducationTab({ doctorId }) {
     <Card>
       <CardHeader>
         <CardTitle>Education</CardTitle>
-        <CardDescription>
-          Manage doctor’s education history (add, edit, delete)
-        </CardDescription>
+        <CardDescription>Manage doctor’s education history</CardDescription>
       </CardHeader>
+
       <CardContent>
-        {/* Form */}
+        {/* FORM */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-1">
+            <div>
               <Label>Degree</Label>
-              <Input
-                // {...register("degree", { required: true })}
-                {...register("degree")}
-                disabled={loading}
-              />
-              {errors.degree && (
-                <p className="text-red-500 text-sm">Required</p>
-              )}
+              <Input {...register("degree")} disabled={loading} />
             </div>
-            <div className="space-y-1">
+
+            <div>
               <Label>Institution</Label>
-              <Input
-                // {...register("institution", { required: true })}
-                {...register("institution")}
-                disabled={loading}
-              />
-              {errors.institution && (
-                <p className="text-red-500 text-sm">Required</p>
-              )}
+              <Input {...register("institution")} disabled={loading} />
             </div>
-            <div className="space-y-1">
-              <Label>Year of Completion</Label>
+
+            <div>
+              <Label>Year</Label>
               <Input
                 type="number"
-                // {...register("yearOfCompletion", { required: true })}
                 {...register("yearOfCompletion")}
                 disabled={loading}
               />
-              {errors.yearOfCompletion && (
-                <p className="text-red-500 text-sm">Required</p>
-              )}
             </div>
           </div>
 
@@ -167,6 +151,7 @@ export default function EducationTab({ doctorId }) {
                 ? "Update Education"
                 : "Add Education"}
           </Button>
+
           {editingId && (
             <Button
               type="button"
@@ -181,7 +166,7 @@ export default function EducationTab({ doctorId }) {
           )}
         </form>
 
-        {/* List */}
+        {/* LIST */}
         <div className="space-y-4">
           {educationList.length === 0 ? (
             <p className="text-gray-500">No education records yet.</p>
@@ -189,7 +174,7 @@ export default function EducationTab({ doctorId }) {
             educationList.map((edu) => (
               <div
                 key={edu._id}
-                className="flex items-center justify-between border p-3 rounded-lg"
+                className="flex justify-between border p-3 rounded-lg"
               >
                 <div>
                   <p className="font-medium">{edu.degree}</p>
@@ -197,7 +182,9 @@ export default function EducationTab({ doctorId }) {
                     {edu.institution} — {edu.yearOfCompletion}
                   </p>
                 </div>
+
                 <div className="flex gap-2">
+                  {/* EDIT */}
                   <Button
                     variant="outline"
                     size="sm"
@@ -205,13 +192,37 @@ export default function EducationTab({ doctorId }) {
                   >
                     Edit
                   </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(edu._id)}
-                  >
-                    Delete
-                  </Button>
+
+                  {/* DELETE WITH ALERT DIALOG */}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Education</AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this record? This
+                          action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                        <AlertDialogAction
+                          onClick={() => handleDelete(edu._id)}
+                          disabled={deleteLoading}
+                        >
+                          {deleteLoading ? "Deleting..." : "Delete"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))

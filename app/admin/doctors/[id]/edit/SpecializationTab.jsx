@@ -18,10 +18,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
 export default function SpecializationTab({ doctorId }) {
   const [loading, setLoading] = useState(false);
   const [specializationList, setSpecializationList] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const {
     register,
@@ -32,65 +45,61 @@ export default function SpecializationTab({ doctorId }) {
     defaultValues: { field: "", description: "" },
   });
 
-  // Fetch doctor's specializations
+  // Fetch
   useEffect(() => {
     const fetchSpecializations = async () => {
       try {
         const res = await api.get(`/doctor/${doctorId}`);
-        if (res.data?.specialization) {
-          setSpecializationList(res.data.specialization);
-        }
-      } catch (error) {
-        toast.error(
-          error.response?.data?.message || "Failed to fetch specializations"
-        );
+        setSpecializationList(res.data?.specialization || []);
+      } catch {
+        toast.error("Failed to fetch specializations");
       }
     };
-    fetchSpecializations();
-  }, [doctorId, toast]);
 
-  // Add or Update specialization
+    fetchSpecializations();
+  }, [doctorId]);
+
+  // Add / Update
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       if (editingId) {
         await api.put(`/doctor/${doctorId}/specialization/${editingId}`, data);
-
         toast.success("Specialization updated");
       } else {
         await api.post(`/doctor/${doctorId}/specialization`, data);
-
         toast.success("Specialization added");
       }
 
       const res = await api.get(`/doctor/${doctorId}`);
       setSpecializationList(res.data.specialization);
 
-      reset({ field: "", description: "" });
+      reset();
       setEditingId(null);
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to save specialization"
-      );
+    } catch {
+      toast.error("Failed to save specialization");
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete specialization
+  // Delete
   const handleDelete = async (id) => {
+    setDeleteLoading(true);
     try {
       await api.delete(`/doctor/${doctorId}/specialization/${id}`);
+
       toast.success("Specialization deleted");
+
       setSpecializationList((prev) => prev.filter((s) => s._id !== id));
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to delete specialization"
-      );
+    } catch {
+      toast.error("Failed to delete specialization");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
-  // Edit specialization
+  // Edit
   const handleEdit = (spec) => {
     reset({
       field: spec.field,
@@ -103,25 +112,22 @@ export default function SpecializationTab({ doctorId }) {
     <Card>
       <CardHeader>
         <CardTitle>Specialization</CardTitle>
-        <CardDescription>
-          Manage doctor’s specializations (add, edit, delete)
-        </CardDescription>
+        <CardDescription>Manage doctor’s specializations</CardDescription>
       </CardHeader>
+
       <CardContent>
-        {/* Form */}
+        {/* FORM */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1">
+            <div>
               <Label>Field</Label>
-              <Input
-                {...register("field", { required: true })}
-                disabled={loading}
-              />
+              <Input {...register("field", { required: true })} />
               {errors.field && <p className="text-red-500 text-sm">Required</p>}
             </div>
-            <div className="space-y-1">
+
+            <div>
               <Label>Description</Label>
-              <Input {...register("description")} disabled={loading} />
+              <Input {...register("description")} />
             </div>
           </div>
 
@@ -129,15 +135,16 @@ export default function SpecializationTab({ doctorId }) {
             {loading
               ? "Saving..."
               : editingId
-              ? "Update Specialization"
-              : "Add Specialization"}
+                ? "Update Specialization"
+                : "Add Specialization"}
           </Button>
+
           {editingId && (
             <Button
               type="button"
               variant="outline"
               onClick={() => {
-                reset({ field: "", description: "" });
+                reset();
                 setEditingId(null);
               }}
             >
@@ -146,7 +153,7 @@ export default function SpecializationTab({ doctorId }) {
           )}
         </form>
 
-        {/* List */}
+        {/* LIST */}
         <div className="space-y-4">
           {specializationList.length === 0 ? (
             <p className="text-gray-500">No specialization records yet.</p>
@@ -154,7 +161,7 @@ export default function SpecializationTab({ doctorId }) {
             specializationList.map((spec) => (
               <div
                 key={spec._id}
-                className="flex items-center justify-between border p-3 rounded-lg"
+                className="flex justify-between border p-3 rounded-lg"
               >
                 <div>
                   <p className="font-medium">{spec.field}</p>
@@ -162,7 +169,9 @@ export default function SpecializationTab({ doctorId }) {
                     <p className="text-sm text-gray-600">{spec.description}</p>
                   )}
                 </div>
+
                 <div className="flex gap-2">
+                  {/* EDIT */}
                   <Button
                     variant="outline"
                     size="sm"
@@ -170,13 +179,39 @@ export default function SpecializationTab({ doctorId }) {
                   >
                     Edit
                   </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(spec._id)}
-                  >
-                    Delete
-                  </Button>
+
+                  {/* DELETE CONFIRM */}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Delete Specialization
+                        </AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this specialization?
+                          This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                        <AlertDialogAction
+                          onClick={() => handleDelete(spec._id)}
+                          disabled={deleteLoading}
+                        >
+                          {deleteLoading ? "Deleting..." : "Delete"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))
