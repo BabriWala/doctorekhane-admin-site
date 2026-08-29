@@ -71,7 +71,6 @@ export default function UsersPage() {
     },
   });
 
-  console.log(data);
 
   const { data: stats } = useQuery({
     queryKey: ["user-stats"],

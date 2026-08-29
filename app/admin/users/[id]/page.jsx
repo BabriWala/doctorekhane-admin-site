@@ -124,7 +124,7 @@ export default function UserDetailPage({ params }) {
 
   const statusMutation = useMutation({
     mutationFn: async (status) => {
-      const response = await api.patch(`/api/users/${id}/status`, { status });
+      const response = await api.patch(`/users/${id}/status`, { status });
       return response.data;
     },
     onSuccess: () => {

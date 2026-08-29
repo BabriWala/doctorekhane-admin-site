@@ -72,7 +72,6 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log("I am here in refresh");
         const { data } = await api.post(
           "/auth/refresh-token",
           {},
@@ -89,7 +88,6 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        console.log("I am here in refresh error");
         processQueue(refreshError, null);
         accessToken = null;
 

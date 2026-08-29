@@ -15,15 +15,22 @@ import {
   Component,
   X,
   Home,
+  Star,
+  Stethoscope,
+  Building2,
+  Droplets,
+  Ambulance,
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: Home },
   { name: "Users", href: "/admin/users", icon: Users },
-  { name: "Doctors", href: "/admin/doctors", icon: Component },
-  { name: "Hospitals", href: "/admin/hospitals", icon: Component },
-  { name: "Blood Donors", href: "/admin/blood-donors", icon: Component },
-  { name: "Ambulances", href: "/admin/ambulances", icon: Component },
+  { name: "Doctors", href: "/admin/doctors", icon: Stethoscope },
+  { name: "Hospitals", href: "/admin/hospitals", icon: Building2 },
+  { name: "Blood Donors", href: "/admin/blood-donors", icon: Droplets },
+  { name: "Ambulances", href: "/admin/ambulances", icon: Ambulance },
+  { name: "Appointments", href: "/admin/appointments", icon: Calendar },
+  { name: "Reviews", href: "/admin/reviews", icon: Star },
   // { name: "Bookings", href: "/admin/bookings", icon: Calendar },
   // {
   //   name: "Visa Applications",
@@ -54,7 +61,7 @@ export function Sidebar({ className }) {
 
       <nav className="flex-1 p-4 space-y-2">
         {navigation.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
           return (
             <Link key={item.name} href={item.href}>
               <Button

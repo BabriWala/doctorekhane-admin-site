@@ -46,6 +46,13 @@ export default function BasicInfoTab({ hospitalId }) {
       status: "Active",
       phone: "",
       email: "",
+      servicesText: "",
+      facilitiesText: "",
+      insuranceText: "",
+      is24Hours: false,
+      emergencyPhone: "",
+      ambulancePhone: "",
+      bedCount: 0,
     },
   });
 
@@ -59,6 +66,9 @@ export default function BasicInfoTab({ hospitalId }) {
             ...res.data.basicInfo,
             phone: res.data.contact?.phone || "",
             email: res.data.contact?.email || "",
+            servicesText: (res.data.basicInfo.services || []).join(", "),
+            facilitiesText: (res.data.basicInfo.facilities || []).join(", "),
+            insuranceText: (res.data.basicInfo.insurance || []).join(", "),
           });
         }
       } catch (error) {
@@ -85,6 +95,13 @@ export default function BasicInfoTab({ hospitalId }) {
         status: data.status,
         phone: data.phone,
         email: data.email,
+        services: String(data.servicesText || "").split(",").map((item) => item.trim()).filter(Boolean),
+        facilities: String(data.facilitiesText || "").split(",").map((item) => item.trim()).filter(Boolean),
+        insurance: String(data.insuranceText || "").split(",").map((item) => item.trim()).filter(Boolean),
+        is24Hours: Boolean(data.is24Hours),
+        emergencyPhone: data.emergencyPhone,
+        ambulancePhone: data.ambulancePhone,
+        bedCount: Number(data.bedCount) || 0,
       };
 
       await api.put(`/hospital/${hospitalId}/basic-info`, updatePayload);
@@ -122,6 +139,11 @@ export default function BasicInfoTab({ hospitalId }) {
                 <p className="text-xs text-red-500">{errors.name.message}</p>
               )}
             </div>
+            <div className="space-y-1 md:col-span-2"><Label>Services</Label><Input {...register("servicesText")} placeholder="ICU, Emergency, MRI, Dialysis" disabled={loading} /></div>
+            <div className="space-y-1 md:col-span-2"><Label>Facilities</Label><Input {...register("facilitiesText")} placeholder="Pharmacy, Parking, Cafeteria" disabled={loading} /></div>
+            <div className="space-y-1 md:col-span-2"><Label>Accepted Insurance</Label><Input {...register("insuranceText")} placeholder="Provider A, Provider B" disabled={loading} /></div>
+            <div className="space-y-1"><Label>Bed Count</Label><Input type="number" min="0" {...register("bedCount")} disabled={loading} /></div>
+            <label className="flex items-center gap-3 rounded-md border p-3"><input type="checkbox" {...register("is24Hours")} disabled={loading} /><span className="font-medium">Open 24 hours</span></label>
 
             <div className="space-y-1">
               <Label>Registration Number</Label>
@@ -197,6 +219,8 @@ export default function BasicInfoTab({ hospitalId }) {
               <Label>Email</Label>
               <Input type="email" {...register("email")} disabled={loading} />
             </div>
+            <div className="space-y-1"><Label>Emergency Phone</Label><Input {...register("emergencyPhone")} disabled={loading} /></div>
+            <div className="space-y-1"><Label>Ambulance Phone</Label><Input {...register("ambulancePhone")} disabled={loading} /></div>
           </div>
 
           <Button type="submit" disabled={loading}>

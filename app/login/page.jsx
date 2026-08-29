@@ -46,7 +46,6 @@ export default function Login() {
     setLoading(false);
   };
 
-  console.log("i am login page");
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <motion.div

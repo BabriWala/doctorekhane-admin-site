@@ -34,7 +34,6 @@ export default function DoctorsPage() {
     refetchOnWindowFocus: true,
     staleTime: 0,
   });
-  console.log(doctors);
   // Flatten doctors data
   const flattenedDoctors =
     doctors?.map((doc) => ({
@@ -59,7 +58,6 @@ export default function DoctorsPage() {
       toast.error(error.response?.data?.message || "Failed to delete doctor");
     },
   });
-  console.log(flattenedDoctors);
   return (
     <div className="space-y-6">
       {/* Header */}

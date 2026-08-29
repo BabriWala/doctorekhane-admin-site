@@ -46,6 +46,12 @@ export default function ProfessionalTab({ doctorId }) {
       order: 1,
       licenseNumber: "",
       nidNumber: "",
+      languagesText: "",
+      servicesText: "",
+      conditionsText: "",
+      telemedicine: false,
+      featured: false,
+      totalPatients: 0,
     },
   });
 
@@ -61,6 +67,12 @@ export default function ProfessionalTab({ doctorId }) {
           reset({
             ...res.data.professional,
             status: res.data.professional?.status || "Active",
+            languagesText: (res.data.languages || []).join(", "),
+            servicesText: (res.data.services || []).join(", "),
+            conditionsText: (res.data.conditionsTreated || []).join(", "),
+            telemedicine: Boolean(res.data.telemedicine),
+            featured: Boolean(res.data.featured),
+            totalPatients: res.data.totalPatients || 0,
           });
         }
       } catch (error) {
@@ -76,7 +88,13 @@ export default function ProfessionalTab({ doctorId }) {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await api.put(`/doctor/${doctorId}/professional`, data);
+      const splitList = (value) => String(value || "").split(",").map((item) => item.trim()).filter(Boolean);
+      await api.put(`/doctor/${doctorId}/professional`, {
+        ...data,
+        languages: splitList(data.languagesText),
+        services: splitList(data.servicesText),
+        conditionsTreated: splitList(data.conditionsText),
+      });
       toast.success("Professional info updated");
     } catch (error) {
       toast.error(
@@ -178,6 +196,12 @@ export default function ProfessionalTab({ doctorId }) {
               <Label>NID Number</Label>
               <Input {...register("nidNumber")} disabled={loading} />
             </div>
+            <div className="space-y-1 md:col-span-2"><Label>Languages</Label><Input {...register("languagesText")} placeholder="Bangla, English, Hindi" disabled={loading} /><p className="text-xs text-muted-foreground">Separate multiple values with commas.</p></div>
+            <div className="space-y-1 md:col-span-2"><Label>Services</Label><Input {...register("servicesText")} placeholder="Consultation, ECG, Follow-up" disabled={loading} /></div>
+            <div className="space-y-1 md:col-span-2"><Label>Conditions Treated</Label><Input {...register("conditionsText")} placeholder="Hypertension, Heart disease" disabled={loading} /></div>
+            <div className="space-y-1"><Label>Total Patients</Label><Input type="number" min="0" {...register("totalPatients", { valueAsNumber: true })} disabled={loading} /></div>
+            <label className="flex items-center gap-3 rounded-md border p-3"><input type="checkbox" {...register("telemedicine")} disabled={loading} /><span><span className="block font-medium">Telemedicine</span><span className="text-xs text-muted-foreground">Allow video consultations</span></span></label>
+            <label className="flex items-center gap-3 rounded-md border p-3"><input type="checkbox" {...register("featured")} disabled={loading} /><span><span className="block font-medium">Featured doctor</span><span className="text-xs text-muted-foreground">Prioritize in discovery</span></span></label>
           </div>
 
           <Button type="submit" disabled={loading}>

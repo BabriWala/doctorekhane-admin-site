@@ -15,10 +15,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export function AuthGuard({ children, requireAdmin = false }) {
-  const { user, loading, isAuthenticated, isAdmin } = useAuth();
+  const { loading, isAuthenticated, isAdmin } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  console.log(user);
 
   // 🚨 Skip guard completely on public routes
   // 🚨 Public routes should skip guard
@@ -28,17 +27,9 @@ export function AuthGuard({ children, requireAdmin = false }) {
   }
 
   useEffect(() => {
-    console.log({
-      loading,
-      isAuthenticated,
-      isAdmin,
-      requireAdmin,
-      currentPath: pathname,
-    });
     if (!loading) {
       if (!isAuthenticated) {
         if (pathname !== "/login") {
-          console.log("Redirecting to login");
           router.replace("/login");
         }
         return;
@@ -49,8 +40,7 @@ export function AuthGuard({ children, requireAdmin = false }) {
         return;
       }
     }
-  }, [loading, isAuthenticated, isAdmin, requireAdmin, router]);
-  console.log(loading);
+  }, [loading, isAuthenticated, isAdmin, requireAdmin, router, pathname]);
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">

@@ -45,11 +45,9 @@ export default function CreateAdminPage() {
   const createMutation = useMutation({
     mutationFn: async (data) => {
       const response = await api.post("/users/admin/create", data);
-      console.log(response);
       return response.data;
     },
     onSuccess: (data) => {
-      console.log(data);
 
       toast.success(`Admin user ${data.user.name} created successfully`); // ✅ success toast
       router.push("/admin/users");
