@@ -68,8 +68,8 @@ export function DataTable({
         </div>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
+      <div className="max-w-full overflow-x-auto rounded-md border">
+        <Table className="min-w-[760px]">
           <TableHeader>
             <TableRow>
               {selectable && (
@@ -119,11 +119,11 @@ export function DataTable({
       </div>
 
       {pagination && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm text-muted-foreground">
             Showing {pagination.from} to {pagination.to} of {pagination.total} results
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -131,7 +131,7 @@ export function DataTable({
               disabled={pagination.currentPage <= 1}
             >
               <ChevronLeft className="h-4 w-4" />
-              Previous
+              <span className="hidden sm:inline">Previous</span>
             </Button>
             <span className="text-sm">
               Page {pagination.currentPage} of {pagination.totalPages}
@@ -142,7 +142,7 @@ export function DataTable({
               onClick={() => onPageChange?.(pagination.currentPage + 1)}
               disabled={pagination.currentPage >= pagination.totalPages}
             >
-              Next
+              <span className="hidden sm:inline">Next</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

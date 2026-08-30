@@ -40,7 +40,7 @@ const navigation = [
   // { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
-export function Sidebar({ className }) {
+export function Sidebar({ className, onNavigate }) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
 
@@ -59,11 +59,11 @@ export function Sidebar({ className }) {
 
       <Separator />
 
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 overflow-y-auto p-4 space-y-2">
         {navigation.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
           return (
-            <Link key={item.name} href={item.href}>
+            <Link key={item.name} href={item.href} onClick={onNavigate}>
               <Button
                 variant={isActive ? "default" : "ghost"}
                 className={cn("w-full justify-start", collapsed && "px-2")}

@@ -118,5 +118,13 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
   }
+}
+
+@media (max-width: 640px) {
+  main h1 { font-size: 1.75rem !important; line-height: 2rem !important; }
+  main .items-center.justify-between { flex-wrap: wrap; gap: 0.75rem; }
+  main button, main a { min-height: 2.5rem; }
+  main input, main select, main textarea { font-size: 16px; }
 }

@@ -15,10 +15,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Bell, Search, Moon, Sun, User, LogOut } from "lucide-react"
+import { Bell, Search, Moon, Sun, User, LogOut, Menu } from "lucide-react"
 import { useTheme } from "next-themes"
 
-export function Topbar() {
+export function Topbar({ onMenuClick }) {
   const { user, logout } = useAuth()
   const { theme, setTheme } = useTheme()
   const [notifications] = useState([
@@ -29,15 +29,18 @@ export function Topbar() {
   const unreadCount = notifications.filter((n) => n.unread).length
 
   return (
-    <header className="flex items-center justify-between p-4 border-b bg-background">
-      <div className="flex items-center gap-4 flex-1">
-        <div className="relative max-w-md">
+    <header className="flex min-h-16 items-center justify-between gap-2 border-b bg-background px-3 sm:px-4">
+      <Button variant="ghost" size="icon" className="shrink-0 md:hidden" onClick={onMenuClick} aria-label="Open navigation">
+        <Menu className="h-5 w-5" />
+      </Button>
+      <div className="min-w-0 flex-1">
+        <div className="relative hidden max-w-md sm:block">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Search..." className="pl-10" />
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
         <Button variant="ghost" size="sm" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
@@ -53,7 +56,7 @@ export function Topbar() {
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
+          <DropdownMenuContent align="end" className="w-[min(20rem,calc(100vw-1rem))]">
             <DropdownMenuLabel>Notifications</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {notifications.map((notification) => (
