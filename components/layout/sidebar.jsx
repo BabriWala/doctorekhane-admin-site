@@ -29,6 +29,7 @@ const navigation = [
   { name: "Hospitals", href: "/admin/hospitals", icon: Building2 },
   { name: "Blood Donors", href: "/admin/blood-donors", icon: Droplets },
   { name: "Ambulances", href: "/admin/ambulances", icon: Ambulance },
+  { name: "Ambulance Requests", href: "/admin/ambulance-requests", icon: FileText },
   { name: "Appointments", href: "/admin/appointments", icon: Calendar },
   { name: "Reviews", href: "/admin/reviews", icon: Star },
   // { name: "Bookings", href: "/admin/bookings", icon: Calendar },
