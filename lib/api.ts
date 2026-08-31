@@ -19,6 +19,13 @@ let accessToken = null;
 let isRefreshing = false;
 let failedQueue = [];
 
+const AUTH_ENDPOINTS_WITHOUT_REFRESH = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/logout",
+  "/auth/refresh-token",
+];
+
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -47,8 +54,14 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // ❗ VERY IMPORTANT - skip refresh endpoint
-    if (originalRequest.url === "/auth/refresh-token") {
+    // Public auth failures must reach the form unchanged. In a fresh/incognito
+    // session there is no refresh cookie, so refreshing hides the useful error.
+    if (
+      !originalRequest ||
+      AUTH_ENDPOINTS_WITHOUT_REFRESH.some((endpoint) =>
+        originalRequest.url?.endsWith(endpoint),
+      )
+    ) {
       return Promise.reject(error);
     }
 
@@ -92,7 +105,9 @@ api.interceptors.response.use(
         accessToken = null;
 
         if (typeof window !== "undefined") {
-          window.location.href = "/login";
+          if (window.location.pathname !== "/login") {
+            window.location.replace("/login");
+          }
         }
 
         return Promise.reject(refreshError);
