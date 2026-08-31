@@ -46,6 +46,10 @@ export default function CreateHospitalForm() {
       status: "Active",
       phone: "",
       email: "",
+      website: "",
+      street: "", city: "", state: "", postalCode: "", country: "Bangladesh",
+      servicesText: "", facilitiesText: "", insuranceText: "", accreditationsText: "",
+      is24Hours: false, emergencyPhone: "", ambulancePhone: "", bedCount: 0,
     },
   });
 
@@ -61,6 +65,13 @@ export default function CreateHospitalForm() {
         status: data.status,
         phone: data.phone,
         email: data.email,
+        website: data.website,
+        address: { street: data.street, city: data.city, state: data.state, postalCode: data.postalCode, country: data.country },
+        services: String(data.servicesText || "").split(",").map((item) => item.trim()).filter(Boolean),
+        facilities: String(data.facilitiesText || "").split(",").map((item) => item.trim()).filter(Boolean),
+        insurance: String(data.insuranceText || "").split(",").map((item) => item.trim()).filter(Boolean),
+        accreditations: String(data.accreditationsText || "").split(",").map((item) => item.trim()).filter(Boolean),
+        is24Hours: Boolean(data.is24Hours), emergencyPhone: data.emergencyPhone, ambulancePhone: data.ambulancePhone, bedCount: Number(data.bedCount) || 0,
       });
 
       toast.success("Hospital created successfully");
@@ -138,6 +149,12 @@ export default function CreateHospitalForm() {
                   disabled={loading}
                 />
               </div>
+              <div className="md:col-span-2 space-y-1"><Label>Services</Label><Input {...register("servicesText")} placeholder="ICU, Emergency, MRI" /></div>
+              <div className="md:col-span-2 space-y-1"><Label>Facilities</Label><Input {...register("facilitiesText")} placeholder="Pharmacy, Parking, Cafeteria" /></div>
+              <div className="md:col-span-2 space-y-1"><Label>Insurance</Label><Input {...register("insuranceText")} placeholder="Provider A, Provider B" /></div>
+              <div className="md:col-span-2 space-y-1"><Label>Accreditations</Label><Input {...register("accreditationsText")} placeholder="NABH, ISO 9001" /></div>
+              <div className="space-y-1"><Label>Bed Count</Label><Input type="number" min="0" {...register("bedCount")} /></div>
+              <label className="flex items-center gap-3 rounded-md border p-3"><input type="checkbox" {...register("is24Hours")} /><span>Open 24 hours</span></label>
 
               <div className="space-y-1">
                 <Label>Status *</Label>
@@ -157,6 +174,8 @@ export default function CreateHospitalForm() {
               </div>
             </div>
 
+            <h3 className="text-lg font-semibold">Address</h3><div className="grid grid-cols-1 gap-4 md:grid-cols-2"><div><Label>Street</Label><Input {...register("street")} /></div><div><Label>City *</Label><Input {...register("city", { required: "City is required" })} /></div><div><Label>State</Label><Input {...register("state")} /></div><div><Label>Postal Code</Label><Input {...register("postalCode")} /></div><div><Label>Country</Label><Input {...register("country")} /></div></div>
+
             {/* Contact */}
             <h3 className="text-lg font-semibold mt-6">Contact</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -164,6 +183,9 @@ export default function CreateHospitalForm() {
                 <Label>Phone</Label>
                 <Input {...register("phone")} disabled={loading} />
               </div>
+              <div className="space-y-1"><Label>Website</Label><Input type="url" {...register("website")} /></div>
+              <div className="space-y-1"><Label>Emergency Phone</Label><Input {...register("emergencyPhone")} /></div>
+              <div className="space-y-1"><Label>Ambulance Phone</Label><Input {...register("ambulancePhone")} /></div>
               <div className="space-y-1">
                 <Label>Email</Label>
                 <Input type="email" {...register("email")} disabled={loading} />

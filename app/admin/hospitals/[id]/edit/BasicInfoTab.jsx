@@ -49,6 +49,8 @@ export default function BasicInfoTab({ hospitalId }) {
       servicesText: "",
       facilitiesText: "",
       insuranceText: "",
+      accreditationsText: "",
+      visitingHoursText: "",
       is24Hours: false,
       emergencyPhone: "",
       ambulancePhone: "",
@@ -69,6 +71,8 @@ export default function BasicInfoTab({ hospitalId }) {
             servicesText: (res.data.basicInfo.services || []).join(", "),
             facilitiesText: (res.data.basicInfo.facilities || []).join(", "),
             insuranceText: (res.data.basicInfo.insurance || []).join(", "),
+            accreditationsText: (res.data.basicInfo.accreditations || []).join(", "),
+            visitingHoursText: (res.data.basicInfo.visitingHours || []).map((slot) => `${slot.day}|${slot.open}|${slot.close}`).join("\n"),
           });
         }
       } catch (error) {
@@ -98,6 +102,8 @@ export default function BasicInfoTab({ hospitalId }) {
         services: String(data.servicesText || "").split(",").map((item) => item.trim()).filter(Boolean),
         facilities: String(data.facilitiesText || "").split(",").map((item) => item.trim()).filter(Boolean),
         insurance: String(data.insuranceText || "").split(",").map((item) => item.trim()).filter(Boolean),
+        accreditations: String(data.accreditationsText || "").split(",").map((item) => item.trim()).filter(Boolean),
+        visitingHours: String(data.visitingHoursText || "").split("\n").map((line) => { const [day, open, close] = line.split("|").map((item) => item.trim()); return { day, open, close }; }).filter((slot) => slot.day && slot.open && slot.close),
         is24Hours: Boolean(data.is24Hours),
         emergencyPhone: data.emergencyPhone,
         ambulancePhone: data.ambulancePhone,
@@ -142,6 +148,8 @@ export default function BasicInfoTab({ hospitalId }) {
             <div className="space-y-1 md:col-span-2"><Label>Services</Label><Input {...register("servicesText")} placeholder="ICU, Emergency, MRI, Dialysis" disabled={loading} /></div>
             <div className="space-y-1 md:col-span-2"><Label>Facilities</Label><Input {...register("facilitiesText")} placeholder="Pharmacy, Parking, Cafeteria" disabled={loading} /></div>
             <div className="space-y-1 md:col-span-2"><Label>Accepted Insurance</Label><Input {...register("insuranceText")} placeholder="Provider A, Provider B" disabled={loading} /></div>
+            <div className="space-y-1 md:col-span-2"><Label>Accreditations</Label><Input {...register("accreditationsText")} placeholder="NABH, ISO 9001" disabled={loading} /></div>
+            <div className="space-y-1 md:col-span-2"><Label>Visiting Hours</Label><Textarea {...register("visitingHoursText")} rows={5} placeholder={"Sunday|09:00|20:00\nMonday|09:00|20:00"} disabled={loading} /><p className="text-xs text-muted-foreground">One line per day: Day|Opening time|Closing time</p></div>
             <div className="space-y-1"><Label>Bed Count</Label><Input type="number" min="0" {...register("bedCount")} disabled={loading} /></div>
             <label className="flex items-center gap-3 rounded-md border p-3"><input type="checkbox" {...register("is24Hours")} disabled={loading} /><span className="font-medium">Open 24 hours</span></label>
 
