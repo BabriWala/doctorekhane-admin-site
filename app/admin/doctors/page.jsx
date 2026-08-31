@@ -12,23 +12,27 @@ import api from "@/lib/api";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { PaginationBar } from "@/components/ui/pagination-bar";
 
 export default function DoctorsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteDoctor, setDeleteDoctor] = useState(null);
+  const [page, setPage] = useState(1);
 
   const queryClient = useQueryClient();
 
-  const { data: doctors, isLoading } = useQuery({
-    queryKey: ["doctors", searchTerm],
+  const { data: responseData, isLoading } = useQuery({
+    queryKey: ["doctors", searchTerm, page],
     queryFn: async () => {
       const response = await api.get("/doctor", {
         params: {
           search: searchTerm,
+          page,
+          limit: 10,
           admin: true, // 🔥 ADD THIS
         },
       });
-      return response.data.data;
+      return response.data;
     },
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
@@ -36,7 +40,7 @@ export default function DoctorsPage() {
   });
   // Flatten doctors data
   const flattenedDoctors =
-    doctors?.map((doc) => ({
+    responseData?.data?.map((doc) => ({
       id: doc?.id,
       firstName: doc?.personalDetails?.firstName || "",
       middleName: doc?.personalDetails?.middleName || "",
@@ -83,7 +87,7 @@ export default function DoctorsPage() {
           <Input
             placeholder="Search doctors..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
             className="pl-10"
           />
         </div>
@@ -172,6 +176,8 @@ export default function DoctorsPage() {
           </tbody>
         </table>
       </div>
+
+      <PaginationBar pagination={{ currentPage: responseData?.currentPage, totalPages: responseData?.totalPages, totalItems: responseData?.totalItems }} page={page} onPageChange={setPage} />
 
       {/* Delete confirm dialog */}
       <ConfirmDialog

@@ -28,6 +28,7 @@ const navigation = [
   { name: "Doctors", href: "/admin/doctors", icon: Stethoscope },
   { name: "Hospitals", href: "/admin/hospitals", icon: Building2 },
   { name: "Blood Donors", href: "/admin/blood-donors", icon: Droplets },
+  { name: "Blood Requests", href: "/admin/blood-requests", icon: Droplets },
   { name: "Ambulances", href: "/admin/ambulances", icon: Ambulance },
   { name: "Ambulance Requests", href: "/admin/ambulance-requests", icon: FileText },
   { name: "Ambulance Page", href: "/admin/ambulance-settings", icon: Settings },

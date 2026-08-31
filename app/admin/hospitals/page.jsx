@@ -12,21 +12,23 @@ import api from "@/lib/api";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { PaginationBar } from "@/components/ui/pagination-bar";
 
 export default function HospitalsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteHospital, setDeleteHospital] = useState(null);
+  const [page, setPage] = useState(1);
 
   const queryClient = useQueryClient();
 
   // Fetch hospitals
   const { data: hospitals, isLoading } = useQuery({
-    queryKey: ["hospitals", searchTerm],
+    queryKey: ["hospitals", searchTerm, page],
     queryFn: async () => {
       const res = await api.get("/hospital", {
-        params: { search: searchTerm },
+        params: { search: searchTerm, page, limit: 10 },
       });
-      return res.data; // API returns array
+      return { items: res.data, total: Number(res.headers["x-total-count"] || res.data.length) };
     },
     refetchOnMount: "always", // Always refetch when component mounts
     refetchOnWindowFocus: true, // Refetch when tab/window regains focus
@@ -35,7 +37,7 @@ export default function HospitalsPage() {
 
   // Flatten hospital data for table
   const flattenedHospitals =
-    hospitals?.map((h) => ({
+    hospitals?.items?.map((h) => ({
       _id: h._id,
       name: h.basicInfo?.name || "",
       type: h.basicInfo?.type || "",
@@ -83,7 +85,7 @@ export default function HospitalsPage() {
           <Input
             placeholder="Search hospitals..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
             className="pl-10"
           />
         </div>
@@ -175,6 +177,8 @@ export default function HospitalsPage() {
           </tbody>
         </table>
       </div>
+
+      <PaginationBar pagination={{ currentPage: page, totalPages: Math.ceil((hospitals?.total || 0) / 10), totalItems: hospitals?.total || 0 }} page={page} onPageChange={setPage} />
 
       {/* Delete confirmation */}
       <ConfirmDialog
