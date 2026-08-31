@@ -30,6 +30,7 @@ const navigation = [
   { name: "Blood Donors", href: "/admin/blood-donors", icon: Droplets },
   { name: "Ambulances", href: "/admin/ambulances", icon: Ambulance },
   { name: "Ambulance Requests", href: "/admin/ambulance-requests", icon: FileText },
+  { name: "Ambulance Page", href: "/admin/ambulance-settings", icon: Settings },
   { name: "Appointments", href: "/admin/appointments", icon: Calendar },
   { name: "Reviews", href: "/admin/reviews", icon: Star },
   // { name: "Bookings", href: "/admin/bookings", icon: Calendar },
