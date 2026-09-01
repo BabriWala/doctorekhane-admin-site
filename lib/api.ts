@@ -39,6 +39,7 @@ const processQueue = (error, token = null) => {
 // Attach token to every request
 api.interceptors.request.use(
   (config) => {
+    if (typeof FormData !== "undefined" && config.data instanceof FormData) delete config.headers["Content-Type"];
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
