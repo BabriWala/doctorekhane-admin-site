@@ -2,16 +2,15 @@
 //@ts-nocheck
 import axios from "axios";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL ||
-  (process.env.NEXT_PUBLIC_API_URL
-    ? `${process.env.NEXT_PUBLIC_API_URL}/api`
-    : "http://localhost:4002/api");
+const API_BASE_URL = typeof window !== "undefined"
+  ? "/api"
+  : (process.env.NEXT_PUBLIC_BACKEND_URL ||
+    (process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "http://localhost:4002/api"));
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, // send httpOnly cookies
-  timeout: 10000,
+  timeout: 20000,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -53,6 +52,13 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    const transientStatus = [502, 503, 504].includes(error.response?.status);
+    if (originalRequest?.method?.toLowerCase() === "get" && !originalRequest._networkRetry && (!error.response || transientStatus)) {
+      originalRequest._networkRetry = true;
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return api(originalRequest);
+    }
 
     // Public auth failures must reach the form unchanged. In a fresh/incognito
     // session there is no refresh cookie, so refreshing hides the useful error.
