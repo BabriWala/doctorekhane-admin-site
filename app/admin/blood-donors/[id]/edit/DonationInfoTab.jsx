@@ -30,6 +30,7 @@ export default function DonationInfoTab({ donorId }) {
   } = useForm({
     defaultValues: {
       lastDonationDate: "",
+      totalDonations: 0,
       isActive: true,
       notes: "",
     },
@@ -105,6 +106,11 @@ export default function DonationInfoTab({ donorId }) {
                 <option value={true}>Yes</option>
                 <option value={false}>No</option>
               </select>
+            </div>
+
+            <div className="space-y-1">
+              <Label>Total Donations</Label>
+              <Input type="number" min="0" {...register("totalDonations", { valueAsNumber: true, min: 0 })} disabled={loading} />
             </div>
 
             <div className="md:col-span-2 space-y-1">

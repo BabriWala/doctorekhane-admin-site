@@ -56,7 +56,7 @@ export default function PersonalDetailsTab({ doctorId }) {
       try {
         const res = await api.get(`/doctor/${doctorId}`);
         if (res.data?.personalDetails) {
-          reset(res.data.personalDetails);
+          reset({ ...res.data.personalDetails, dob: res.data.personalDetails.dob ? String(res.data.personalDetails.dob).slice(0, 10) : "" });
         }
       } catch (error) {
         toast.error(
