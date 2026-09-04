@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Edit, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
+import EntityActions from "@/components/EntityActions";
 
 export default function BloodDonorPage() {
   const [search, setSearch] = useState(""); // client-side search (current page only)
@@ -244,6 +245,7 @@ export default function BloodDonorPage() {
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
+                    <EntityActions resource="blood-donor" id={d.id} active={d.isActive} queryKey="blood-donors" />
                   </td>
                 </tr>
               ))

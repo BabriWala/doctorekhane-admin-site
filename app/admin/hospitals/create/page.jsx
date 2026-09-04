@@ -181,14 +181,14 @@ export default function CreateHospitalForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <Label>Phone</Label>
-                <Input {...register("phone")} disabled={loading} />
+                <Input {...register("phone", { required: "Phone is required" })} required disabled={loading} />
               </div>
               <div className="space-y-1"><Label>Website</Label><Input type="url" {...register("website")} /></div>
               <div className="space-y-1"><Label>Emergency Phone</Label><Input {...register("emergencyPhone")} /></div>
               <div className="space-y-1"><Label>Ambulance Phone</Label><Input {...register("ambulancePhone")} /></div>
               <div className="space-y-1">
                 <Label>Email</Label>
-                <Input type="email" {...register("email")} disabled={loading} />
+                <Input type="email" {...register("email", { required: "Email is required" })} required disabled={loading} />
               </div>
             </div>
 

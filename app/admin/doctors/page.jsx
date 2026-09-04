@@ -18,18 +18,19 @@ export default function DoctorsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteDoctor, setDeleteDoctor] = useState(null);
   const [page, setPage] = useState(1);
+  const [status, setStatus] = useState("Active");
 
   const queryClient = useQueryClient();
 
   const { data: responseData, isLoading } = useQuery({
-    queryKey: ["doctors", searchTerm, page],
+    queryKey: ["doctors", searchTerm, page, status],
     queryFn: async () => {
       const response = await api.get("/doctor", {
         params: {
           search: searchTerm,
           page,
           limit: 10,
-          admin: true, // 🔥 ADD THIS
+          status: status === "all" ? undefined : status,
         },
       });
       return response.data;
@@ -54,7 +55,7 @@ export default function DoctorsPage() {
   const deleteMutation = useMutation({
     mutationFn: async (id) => await api.delete(`/doctor/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries(["doctors"]);
+      queryClient.invalidateQueries({ queryKey: ["doctors"] });
       toast.success("Doctor deleted successfully");
       setDeleteDoctor(null);
     },
@@ -68,7 +69,7 @@ export default function DoctorsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Doctors</h1>
-          <p className="text-gray-500">Manage your doctors</p>
+          <p className="text-gray-500">Active count matches the public directory. Inactive profiles are private.</p><select aria-label="Doctor status" className="mt-2 rounded border px-3 py-2" value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}><option value="Active">Active (public)</option><option value="Inactive">Inactive</option><option value="all">All records</option></select>
         </div>
         <Button asChild>
           <Link

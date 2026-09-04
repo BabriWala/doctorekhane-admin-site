@@ -52,7 +52,7 @@ export default function BasicInfoTab({ donorId }) {
       try {
         const res = await api.get(`/blood-donor/${donorId}`);
         if (res.data?.donor?.basicInfo) {
-          reset(res.data.donor.basicInfo);
+          reset({ ...res.data.donor.basicInfo, dob: res.data.donor.basicInfo.dob ? String(res.data.donor.basicInfo.dob).slice(0, 10) : "" });
         }
       } catch (error) {
         toast.error(

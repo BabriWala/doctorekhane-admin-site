@@ -62,11 +62,11 @@ export default function DonationInfoTab({ donorId }) {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const res = await api.put(`/blood-donor/${donorId}/donation-info`, data);
+      const res = await api.put(`/blood-donor/${donorId}/donation-info`, { ...data, isActive: data.isActive === true || data.isActive === "true" });
 
       toast.success("Blood donor donation info updated successfully"); // ✅ success toast
 
-      reset(res.data.donationInfo);
+      reset({ ...res.data.donationInfo, lastDonationDate: res.data.donationInfo.lastDonationDate ? String(res.data.donationInfo.lastDonationDate).slice(0, 10) : "" });
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to update donation info",

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Edit, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
+import EntityActions from "@/components/EntityActions";
 
 export default function AmbulancesPage() {
   const [search, setSearch] = useState(""); // client-side search (current page only)
@@ -243,6 +244,7 @@ export default function AmbulancesPage() {
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
+                    <EntityActions resource="ambulance" id={a.id} queryKey="ambulances" />
                   </td>
                 </tr>
               ))

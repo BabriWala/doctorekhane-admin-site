@@ -22,11 +22,10 @@ export function AuthGuard({ children, requireAdmin = false }) {
   // 🚨 Skip guard completely on public routes
   // 🚨 Public routes should skip guard
   const publicRoutes = ["/login", "/register"];
-  if (publicRoutes.includes(pathname)) {
-    return children;
-  }
+  const isPublicRoute = publicRoutes.includes(pathname);
 
   useEffect(() => {
+    if (isPublicRoute) return;
     if (!loading) {
       if (!isAuthenticated) {
         if (pathname !== "/login") {
@@ -40,7 +39,8 @@ export function AuthGuard({ children, requireAdmin = false }) {
         return;
       }
     }
-  }, [loading, isAuthenticated, isAdmin, requireAdmin, router, pathname]);
+  }, [loading, isAuthenticated, isAdmin, requireAdmin, router, pathname, isPublicRoute]);
+  if (isPublicRoute) return children;
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
