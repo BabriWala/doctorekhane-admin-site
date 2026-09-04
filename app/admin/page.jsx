@@ -23,7 +23,7 @@ const StatCard = ({ title, value, description, icon: Icon, trend }) => (
     <CardContent>
       <div className="text-2xl font-bold">{value}</div>
       <p className="text-xs text-muted-foreground">
-        {trend && (
+        {Boolean(trend) && (
           <span
             className={`inline-flex items-center ${trend > 0 ? "text-green-600" : "text-red-600"
               }`}
@@ -53,6 +53,8 @@ export default function AdminDashboard() {
     retry: 3,
     refetchInterval: 60000, // Refetch every minute
   });
+
+  const { data: health, isError: healthError } = useQuery({ queryKey: ["system-health"], queryFn: async () => (await api.get("/health")).data, refetchInterval: 30000 });
 
   if (isLoading) {
     return (
@@ -113,18 +115,18 @@ export default function AdminDashboard() {
           trend={stats?.bookings?.trend}
         />
         <StatCard
-          title="Visa Applications"
-          value={stats?.visaApplications?.total || 0}
-          description="this month"
+          title="Active Doctors"
+          value={stats?.doctors?.active ?? "—"}
+          description="in the directory"
           icon={FileText}
-          trend={stats?.visaApplications?.trend}
+
         />
         <StatCard
-          title="Revenue"
-          value={`$${stats?.revenue?.total || 0}`}
-          description="this month"
+          title="Hospitals"
+          value={stats?.hospitals?.total ?? "—"}
+          description="in the directory"
           icon={TrendingUp}
-          trend={stats?.revenue?.trend}
+
         />
       </div>
 
@@ -164,15 +166,15 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm">API Status</span>
-                <span className="text-sm text-green-600">Operational</span>
+                <span className="text-sm">{healthError ? "Unavailable" : health ? "Operational" : "Checking…"}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Database</span>
-                <span className="text-sm text-green-600">Connected</span>
+                <span className="text-sm">{health?.data?.database || "Unknown"}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Storage</span>
-                <span className="text-sm text-green-600">Available</span>
+                <span className="text-sm">Not monitored</span>
               </div>
             </div>
           </CardContent>
