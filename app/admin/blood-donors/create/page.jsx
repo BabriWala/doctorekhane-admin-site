@@ -75,7 +75,7 @@ export default function CreateBloodDonorForm() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1">
-                <Label>First Name *</Label>
+                <Label>First Name <span className="text-red-600">*</span></Label>
                 <Input
                   {...register("firstName", {
                     required: "First Name is required",
@@ -95,7 +95,7 @@ export default function CreateBloodDonorForm() {
               </div>
 
               <div className="space-y-1">
-                <Label>Last Name *</Label>
+                <Label>Last Name <span className="text-red-600">*</span></Label>
                 <Input
                   {...register("lastName", {
                     required: "Last Name is required",
@@ -110,7 +110,8 @@ export default function CreateBloodDonorForm() {
               </div>
 
               <div className="space-y-1">
-                <Label>Gender *</Label>
+                <Label>Gender <span className="text-red-600">*</span></Label>
+                <input type="hidden" {...register("gender", { required: "Gender is required" })} />
                 <Select
                   value={watch("gender")}
                   onValueChange={(value) => setValue("gender", value)}
@@ -133,16 +134,18 @@ export default function CreateBloodDonorForm() {
               </div>
 
               <div className="space-y-1">
-                <Label>Date of Birth *</Label>
+                <Label>Date of Birth <span className="text-red-600">*</span></Label>
                 <Input
                   type="date"
-                  {...register("dob", { required: true })}
+                  required
+                  {...register("dob", { required: "Date of birth is required" })}
                   disabled={loading}
                 />
               </div>
 
               <div className="space-y-1">
-                <Label>Blood Group *</Label>
+                <Label>Blood Group <span className="text-red-600">*</span></Label>
+                <input type="hidden" {...register("bloodGroup", { required: "Blood group is required" })} />
                 <Select
                   value={watch("bloodGroup")}
                   onValueChange={(value) => setValue("bloodGroup", value)}

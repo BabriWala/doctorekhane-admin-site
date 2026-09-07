@@ -78,7 +78,7 @@ export default function CreateDoctorPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <Label>First Name *</Label>
+                <Label>First Name <span className="text-red-600">*</span></Label>
                 <Input
                   {...register("firstName", {
                     required: "First Name is required",
@@ -98,7 +98,7 @@ export default function CreateDoctorPage() {
               </div>
 
               <div className="space-y-1">
-                <Label>Last Name *</Label>
+                <Label>Last Name <span className="text-red-600">*</span></Label>
                 <Input
                   {...register("lastName", {
                     required: "Last Name is required",
@@ -113,7 +113,8 @@ export default function CreateDoctorPage() {
               </div>
 
               <div className="space-y-1">
-                <Label>Gender *</Label>
+                <Label>Gender <span className="text-red-600">*</span></Label>
+                <input type="hidden" {...register("gender", { required: "Gender is required" })} />
                 <Select
                   value={watch("gender")}
                   onValueChange={(value) => setValue("gender", value)}
@@ -137,23 +138,23 @@ export default function CreateDoctorPage() {
 
               {/* <div className="space-y-1">
                 <Label>Date of Birth *</Label>
-                <Input type="date" {...register("dob")} disabled={loading} />
+                <Input type="date" required {...register("dob", { required: "Date of birth is required" })} disabled={loading} />
                 {errors.dob && (
                   <p className="text-xs text-red-500">{errors.dob.message}</p>
                 )}
               </div> */}
 
               <div className="space-y-1">
-                <Label>Phone *</Label>
-                <Input {...register("phone")} disabled={loading} />
+                <Label>Phone <span className="text-red-600">*</span></Label>
+                <Input required {...register("phone", { required: "Phone is required" })} disabled={loading} />
                 {errors.phone && (
                   <p className="text-xs text-red-500">{errors.phone.message}</p>
                 )}
               </div>
 
               <div className="space-y-1">
-                <Label>Email *</Label>
-                <Input type="email" {...register("email")} disabled={loading} />
+                <Label>Email <span className="text-red-600">*</span></Label>
+                <Input type="email" required {...register("email", { required: "Email is required" })} disabled={loading} />
                 {errors.email && (
                   <p className="text-xs text-red-500">{errors.email.message}</p>
                 )}

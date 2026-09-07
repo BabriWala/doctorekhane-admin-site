@@ -173,6 +173,7 @@ export default function BasicInfoTab({ hospitalId }) {
                   <SelectItem value="Private">Private</SelectItem>
                   <SelectItem value="Specialized">Specialized</SelectItem>
                   <SelectItem value="Clinic">Clinic</SelectItem>
+                  <SelectItem value="Diagnostic Center">Diagnostic Center</SelectItem>
                 </SelectContent>
               </Select>
               {errors.type && (

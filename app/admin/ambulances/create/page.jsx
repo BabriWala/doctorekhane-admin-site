@@ -73,7 +73,7 @@ export default function CreateAmbulanceForm() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <Label>Vehicle Number *</Label>
+                <Label>Vehicle Number <span className="text-red-600">*</span></Label>
                 <Input
                   {...register("vehicleNumber", {
                     required: "Vehicle Number is required",
@@ -88,7 +88,8 @@ export default function CreateAmbulanceForm() {
               </div>
 
               <div className="space-y-1">
-                <Label>Type *</Label>
+                <Label>Type <span className="text-red-600">*</span></Label>
+                <input type="hidden" {...register("type", { required: "Type is required" })} />
                 <Select
                   value={watch("type")}
                   onValueChange={(value) => setValue("type", value)}
@@ -111,7 +112,7 @@ export default function CreateAmbulanceForm() {
               </div>
 
               <div className="space-y-1">
-                <Label>Driver Name *</Label>
+                <Label>Driver Name <span className="text-red-600">*</span></Label>
                 <Input
                   {...register("driverName", {
                     required: "Driver Name is required",

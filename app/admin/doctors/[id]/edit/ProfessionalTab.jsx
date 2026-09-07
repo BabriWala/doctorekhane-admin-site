@@ -117,7 +117,7 @@ export default function ProfessionalTab({ doctorId }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Position */}
             <div className="space-y-1">
-              <Label>Position</Label>
+              <Label>Position <span className="text-red-600">*</span></Label>
               <Input
                 {...register("position", { required: true })}
                 disabled={loading}

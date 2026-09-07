@@ -39,6 +39,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function ChambersTab({ doctorId }) {
+  const dayOrder = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const sortChambers = (items) => [...items].sort((a,b) => dayOrder.indexOf(a.day)-dayOrder.indexOf(b.day) || String(a.from).localeCompare(String(b.from)));
   const [loading, setLoading] = useState(false);
   const [chambers, setChambers] = useState([]);
   const [editingId, setEditingId] = useState(null);
@@ -72,7 +74,7 @@ export default function ChambersTab({ doctorId }) {
     const fetchChambers = async () => {
       try {
         const res = await api.get(`/doctor/${doctorId}`);
-        setChambers(res.data?.chambers || []);
+        setChambers(sortChambers(res.data?.chambers || []));
       } catch {
         toast.error("Failed to fetch chambers");
       }
@@ -94,7 +96,7 @@ export default function ChambersTab({ doctorId }) {
       }
 
       const res = await api.get(`/doctor/${doctorId}`);
-      setChambers(res.data.chambers);
+      setChambers(sortChambers(res.data.chambers || []));
 
       reset();
       setEditingId(null);
@@ -152,7 +154,7 @@ export default function ChambersTab({ doctorId }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label>Chamber Name</Label>
+              <Label>Chamber Name <span className="text-red-600">*</span></Label>
               <Input {...register("chamberName", { required: true })} />
             </div>
 
@@ -162,7 +164,7 @@ export default function ChambersTab({ doctorId }) {
             </div>
 
             <div>
-              <Label>Day</Label>
+              <Label>Day <span className="text-red-600">*</span></Label>
               <Controller
                 control={control}
                 name="day"
@@ -174,13 +176,13 @@ export default function ChambersTab({ doctorId }) {
                     </SelectTrigger>
                     <SelectContent>
                       {[
+                        "Saturday",
+                        "Sunday",
                         "Monday",
                         "Tuesday",
                         "Wednesday",
                         "Thursday",
                         "Friday",
-                        "Saturday",
-                        "Sunday",
                       ].map((d) => (
                         <SelectItem key={d} value={d}>
                           {d}
@@ -193,12 +195,12 @@ export default function ChambersTab({ doctorId }) {
             </div>
 
             <div>
-              <Label>From</Label>
+              <Label>From <span className="text-red-600">*</span></Label>
               <Input type="time" {...register("from", { required: true })} />
             </div>
 
             <div>
-              <Label>To</Label>
+              <Label>To <span className="text-red-600">*</span></Label>
               <Input type="time" {...register("to", { required: true })} />
             </div>
 

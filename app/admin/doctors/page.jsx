@@ -49,6 +49,7 @@ export default function DoctorsPage() {
       email: doc?.personalDetails?.email || "",
       phone: doc?.personalDetails?.phone || "",
       status: doc?.professional?.status || "N/A",
+      order: doc?.professional?.order || 1,
     })) || [];
 
   // Delete doctor mutation
@@ -99,6 +100,7 @@ export default function DoctorsPage() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Name
               </th>
@@ -119,22 +121,22 @@ export default function DoctorsPage() {
           <tbody className="bg-white divide-y divide-gray-200">
             {isLoading ? (
               <tr>
-                <td colSpan={5} className="text-center py-4 text-gray-500">
+                <td colSpan={6} className="text-center py-4 text-gray-500">
                   Loading...
                 </td>
               </tr>
             ) : flattenedDoctors.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-4 text-gray-500">
+                <td colSpan={6} className="text-center py-4 text-gray-500">
                   No doctors found.
                 </td>
               </tr>
             ) : (
               flattenedDoctors.map((doc) => (
                 <tr key={doc.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-gray-600">{doc.order}</td>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    {doc.firstName} {doc.middleName ? doc.middleName + " " : ""}
-                    {doc.lastName}
+                    <Link className="text-sky-700 hover:underline" href={`/admin/doctors/${doc.id}/edit`}>{doc.firstName} {doc.middleName ? doc.middleName + " " : ""}{doc.lastName}</Link>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                     {doc.email}
@@ -162,14 +164,14 @@ export default function DoctorsPage() {
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
-                    {/* <Button
+                    <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setDeleteDoctor(doc)}
                       className="text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />
-                    </Button> */}
+                    </Button>
                   </td>
                 </tr>
               ))

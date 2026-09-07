@@ -95,7 +95,7 @@ export default function CreateHospitalForm() {
             {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <Label>Name *</Label>
+                <Label>Name <span className="text-red-600">*</span></Label>
                 <Input
                   {...register("name", { required: "Name is required" })}
                   disabled={loading}
@@ -111,7 +111,8 @@ export default function CreateHospitalForm() {
               </div>
 
               <div className="space-y-1">
-                <Label>Type *</Label>
+                <Label>Type <span className="text-red-600">*</span></Label>
+                <input type="hidden" {...register("type", { required: "Type is required" })} />
                 <Select
                   value={watch("type")}
                   onValueChange={(value) => setValue("type", value)}
@@ -125,6 +126,7 @@ export default function CreateHospitalForm() {
                     <SelectItem value="Private">Private</SelectItem>
                     <SelectItem value="Specialized">Specialized</SelectItem>
                     <SelectItem value="Clinic">Clinic</SelectItem>
+                    <SelectItem value="Diagnostic Center">Diagnostic Center</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.type && (
@@ -157,7 +159,8 @@ export default function CreateHospitalForm() {
               <label className="flex items-center gap-3 rounded-md border p-3"><input type="checkbox" {...register("is24Hours")} /><span>Open 24 hours</span></label>
 
               <div className="space-y-1">
-                <Label>Status *</Label>
+                <Label>Status <span className="text-red-600">*</span></Label>
+                <input type="hidden" {...register("status", { required: "Status is required" })} />
                 <Select
                   value={watch("status")}
                   onValueChange={(value) => setValue("status", value)}
@@ -174,20 +177,20 @@ export default function CreateHospitalForm() {
               </div>
             </div>
 
-            <h3 className="text-lg font-semibold">Address</h3><div className="grid grid-cols-1 gap-4 md:grid-cols-2"><div><Label>Street</Label><Input {...register("street")} /></div><div><Label>City *</Label><Input {...register("city", { required: "City is required" })} /></div><div><Label>State</Label><Input {...register("state")} /></div><div><Label>Postal Code</Label><Input {...register("postalCode")} /></div><div><Label>Country</Label><Input {...register("country")} /></div></div>
+            <h3 className="text-lg font-semibold">Address</h3><div className="grid grid-cols-1 gap-4 md:grid-cols-2"><div><Label>Street</Label><Input {...register("street")} /></div><div><Label>City <span className="text-red-600">*</span></Label><Input required {...register("city", { required: "City is required" })} /></div><div><Label>State</Label><Input {...register("state")} /></div><div><Label>Postal Code</Label><Input {...register("postalCode")} /></div><div><Label>Country</Label><Input {...register("country")} /></div></div>
 
             {/* Contact */}
             <h3 className="text-lg font-semibold mt-6">Contact</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <Label>Phone</Label>
+                <Label>Phone <span className="text-red-600">*</span></Label>
                 <Input {...register("phone", { required: "Phone is required" })} required disabled={loading} />
               </div>
               <div className="space-y-1"><Label>Website</Label><Input type="url" {...register("website")} /></div>
               <div className="space-y-1"><Label>Emergency Phone</Label><Input {...register("emergencyPhone")} /></div>
               <div className="space-y-1"><Label>Ambulance Phone</Label><Input {...register("ambulancePhone")} /></div>
               <div className="space-y-1">
-                <Label>Email</Label>
+                <Label>Email <span className="text-red-600">*</span></Label>
                 <Input type="email" {...register("email", { required: "Email is required" })} required disabled={loading} />
               </div>
             </div>
