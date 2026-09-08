@@ -50,6 +50,7 @@ export default function DoctorsPage() {
       phone: doc?.personalDetails?.phone || "",
       status: doc?.professional?.status || "N/A",
       order: doc?.professional?.order || 1,
+      featured: Boolean(doc?.featured),
     })) || [];
 
   // Delete doctor mutation
@@ -63,6 +64,11 @@ export default function DoctorsPage() {
     onError: (error) => {
       toast.error(error.response?.data?.message || "Failed to delete doctor");
     },
+  });
+  const featureMutation = useMutation({
+    mutationFn: async (doctor) => api.put(`/doctor/${doctor.id}/professional`, { featured: !doctor.featured }),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["doctors"] }); toast.success("Top doctor status updated"); },
+    onError: (error) => toast.error(error.response?.data?.message || "Top doctor status could not be updated"),
   });
   return (
     <div className="space-y-6">
@@ -101,6 +107,7 @@ export default function DoctorsPage() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Top Doctor</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Name
               </th>
@@ -121,13 +128,13 @@ export default function DoctorsPage() {
           <tbody className="bg-white divide-y divide-gray-200">
             {isLoading ? (
               <tr>
-                <td colSpan={6} className="text-center py-4 text-gray-500">
+                <td colSpan={7} className="text-center py-4 text-gray-500">
                   Loading...
                 </td>
               </tr>
             ) : flattenedDoctors.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-4 text-gray-500">
+                <td colSpan={7} className="text-center py-4 text-gray-500">
                   No doctors found.
                 </td>
               </tr>
@@ -135,6 +142,7 @@ export default function DoctorsPage() {
               flattenedDoctors.map((doc) => (
                 <tr key={doc.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-gray-600">{doc.order}</td>
+                  <td className="px-6 py-4"><Button size="sm" variant={doc.featured ? "default" : "outline"} disabled={featureMutation.isPending} onClick={() => featureMutation.mutate(doc)}>{doc.featured ? "Top" : "Set top"}</Button></td>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                     <Link className="text-sky-700 hover:underline" href={`/admin/doctors/${doc.id}/edit`}>{doc.firstName} {doc.middleName ? doc.middleName + " " : ""}{doc.lastName}</Link>
                   </td>

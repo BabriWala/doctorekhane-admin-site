@@ -35,6 +35,7 @@ const navigation = [
   { name: "Ambulance Page", href: "/admin/ambulance-settings", icon: Settings },
   { name: "Appointments", href: "/admin/appointments", icon: Calendar },
   { name: "Reviews", href: "/admin/reviews", icon: Star },
+  { name: "Health Blogs", href: "/admin/blogs", icon: FileText },
   { name: "Contact Inquiries", href: "/admin/inquiries", icon: FileText },
   // { name: "Bookings", href: "/admin/bookings", icon: Calendar },
   // {
