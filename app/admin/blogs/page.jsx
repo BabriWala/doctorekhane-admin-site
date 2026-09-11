@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
 "use client";
+import RecordView from "@/components/RecordView";
 
 import { useEffect, useState } from "react";
 import { Edit, Plus, Save, Trash2, X } from "lucide-react";
@@ -33,6 +34,6 @@ export default function BlogsAdminPage() {
       <label className="flex items-center gap-2"><input type="checkbox" checked={Boolean(form.featured)} onChange={(e) => change("featured", e.target.checked)} /> Featured article</label><div className="flex justify-end gap-2"><Button type="submit" disabled={busy}>{editing ? <Save className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}{editing ? "Save changes" : "Create post"}</Button>{editing && <Button type="button" variant="outline" onClick={reset}><X className="mr-2 h-4 w-4" />Cancel</Button>}</div>
     </form></CardContent></Card>
     <div className="flex items-center justify-between"><h2 className="text-xl font-semibold">All posts ({items.length})</h2><Input className="max-w-xs" placeholder="Search posts" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
-    <div className="grid gap-3">{items.map((post) => <Card key={post._id}><CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-center"><div className="min-w-0 flex-1"><p className="truncate font-semibold">{post.title}</p><p className="text-sm text-muted-foreground">{post.category} · {post.status} · {post.views || 0} views</p></div><div className="flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => togglePublish(post)}>{post.status === "published" ? "Unpublish" : "Publish"}</Button><Button size="sm" onClick={() => edit(post)}><Edit className="mr-1 h-4 w-4" />Edit</Button><Button size="sm" variant="destructive" onClick={() => remove(post)}><Trash2 className="mr-1 h-4 w-4" />Delete</Button></div></CardContent></Card>)}{!items.length && <p className="rounded border p-8 text-center text-muted-foreground">No blog posts found.</p>}</div>
+    <div className="grid gap-3">{items.map((post) => <Card key={post._id}><CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-center"><div className="min-w-0 flex-1"><p className="truncate font-semibold">{post.title}</p><p className="text-sm text-muted-foreground">{post.category} · {post.status} · {post.views || 0} views</p></div><RecordView record={post} title="Article details" /><div className="flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => togglePublish(post)}>{post.status === "published" ? "Unpublish" : "Publish"}</Button><Button size="sm" onClick={() => edit(post)}><Edit className="mr-1 h-4 w-4" />Edit</Button><Button size="sm" variant="destructive" onClick={() => remove(post)}><Trash2 className="mr-1 h-4 w-4" />Delete</Button></div></CardContent></Card>)}{!items.length && <p className="rounded border p-8 text-center text-muted-foreground">No blog posts found.</p>}</div>
   </div>;
 }

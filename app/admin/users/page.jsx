@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
 "use client";
+import RecordView from "@/components/RecordView";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -113,12 +114,7 @@ export default function UsersPage() {
       title: "Name",
       sortable: true,
       render: (value, row) => (
-        <Link
-          href={`/admin/users/${row.id}`}
-          className="font-medium hover:underline"
-        >
-          {value}
-        </Link>
+        <RecordView endpoint={`/users/admin/${row.id}`} title="User details">{value}</RecordView>
       ),
     },
     {

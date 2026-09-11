@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
 "use client";
+import RecordView from "@/components/RecordView";
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -144,7 +145,7 @@ export default function DoctorsPage() {
                   <td className="px-6 py-4 text-gray-600">{doc.order}</td>
                   <td className="px-6 py-4"><Button size="sm" variant={doc.featured ? "default" : "outline"} disabled={featureMutation.isPending} onClick={() => featureMutation.mutate(doc)}>{doc.featured ? "Top" : "Set top"}</Button></td>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    <Link className="text-sky-700 hover:underline" href={`/admin/doctors/${doc.id}/edit`}>{doc.firstName} {doc.middleName ? doc.middleName + " " : ""}{doc.lastName}</Link>
+                    <RecordView endpoint={`/doctor/${doc.id}`} title="Doctor details">{doc.firstName} {doc.middleName ? doc.middleName + " " : ""}{doc.lastName}</RecordView>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                     {doc.email}
@@ -162,11 +163,7 @@ export default function DoctorsPage() {
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
-                    {/* <Link href={`/admin/doctors/${doc.id}`}>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </Link> */}
+                    <RecordView endpoint={`/doctor/${doc.id}`} title="Doctor details" />
                     <Link href={`/admin/doctors/${doc.id}/edit`}>
                       <Button size="sm">
                         <Edit className="h-4 w-4" />

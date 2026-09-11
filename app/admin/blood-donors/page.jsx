@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
 "use client";
+import RecordView from "@/components/RecordView";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -228,7 +229,7 @@ export default function BloodDonorPage() {
               filteredDonors.map((d) => (
                 <tr key={d.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 font-medium text-gray-900">
-                    {d.name}
+                    <RecordView endpoint={`/blood-donor/${d.id}`} title="Blood donor details">{d.name}</RecordView>
                   </td>
                   <td className="px-6 py-4 text-gray-600">{d.bloodGroup}</td>
                   <td className="px-6 py-4 text-gray-600">{d.phone}</td>
@@ -240,7 +241,7 @@ export default function BloodDonorPage() {
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap text-center">
-                    <Link href={`/admin/blood-donors/${d.id}/edit`}>
+                    <RecordView endpoint={`/blood-donor/${d.id}`} title="Blood donor details" /> <Link href={`/admin/blood-donors/${d.id}/edit`}>
                       <Button size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>

@@ -20,6 +20,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            set -eu
             # -------------------------------
             # Load PNPM binary on the server
             # -------------------------------
@@ -37,10 +38,10 @@ jobs:
             git pull origin main
 
             # Install dependencies using pnpm
-            pnpm install
+            npx --yes pnpm@10.11.0 install --frozen-lockfile
 
             # Build the project
-            pnpm run build
+            npm run build
 
             # Restart PM2 process
             pm2 restart doctorekhane-admin-site

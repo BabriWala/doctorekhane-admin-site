@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
 "use client";
+import RecordView from "@/components/RecordView";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -227,7 +228,7 @@ export default function AmbulancesPage() {
               filteredAmbulances.map((a) => (
                 <tr key={a.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 font-medium text-gray-900">
-                    {a.vehicleNumber}
+                    <RecordView endpoint={`/ambulance/${a.id}`} title="Ambulance details">{a.vehicleNumber}</RecordView>
                   </td>
                   <td className="px-6 py-4 text-gray-600">{a.type}</td>
                   <td className="px-6 py-4 text-gray-600">{a.driverName}</td>
@@ -239,7 +240,7 @@ export default function AmbulancesPage() {
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
-                    <Link href={`/admin/ambulances/${a.id}/edit`} className="">
+                    <RecordView endpoint={`/ambulance/${a.id}`} title="Ambulance details" /> <Link href={`/admin/ambulances/${a.id}/edit`} className="">
                       <Button size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
