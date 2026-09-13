@@ -209,7 +209,7 @@ export default function UsersPage() {
         </CardHeader>
         <CardContent>
           <div className="flex gap-4 flex-wrap">
-            <div className="flex-1 min-w-[200px]">
+            <div className="w-full min-w-0 sm:flex-1 sm:min-w-[200px]">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -221,7 +221,7 @@ export default function UsersPage() {
               </div>
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-full sm:w-[150px]">
                 <SelectValue placeholder="Role" />
               </SelectTrigger>
               <SelectContent>
@@ -232,7 +232,7 @@ export default function UsersPage() {
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-full sm:w-[150px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>

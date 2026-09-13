@@ -94,7 +94,7 @@ export default function HospitalsPage() {
 
       {/* Table */}
       <div className="overflow-x-auto border rounded-lg shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="mobile-record-table min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -133,26 +133,26 @@ export default function HospitalsPage() {
             ) : (
               flattenedHospitals.map((h) => (
                 <tr key={h._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                  <td data-label="Name" className="px-6 py-4 whitespace-nowrap font-medium text-gray-900"><div className="record-cell-value">
                     <RecordView endpoint={`/hospital/${h._id}`} title="Hospital details">{h.name}</RecordView>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                  </div></td>
+                  <td data-label="Type" className="px-6 py-4 whitespace-nowrap text-gray-600"><div className="record-cell-value">
                     {h.type}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                  </div></td>
+                  <td data-label="City" className="px-6 py-4 whitespace-nowrap text-gray-600"><div className="record-cell-value">
                     {h.city}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                  </div></td>
+                  <td data-label="Phone" className="px-6 py-4 whitespace-nowrap text-gray-600"><div className="record-cell-value">
                     {h.phone}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  </div></td>
+                  <td data-label="Status" className="px-6 py-4 whitespace-nowrap"><div className="record-cell-value">
                     <Badge
                       variant={h.status === "active" ? "default" : "secondary"}
                     >
                       {h.status}
                     </Badge>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
+                  </div></td>
+                  <td data-label="Actions" className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2"><div className="record-cell-value">
                     <RecordView endpoint={`/hospital/${h._id}`} title="Hospital details" />
                     <Link href={`/admin/hospitals/${h._id}/edit`}>
                       <Button size="sm">
@@ -167,7 +167,7 @@ export default function HospitalsPage() {
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button> */}
-                  </td>
+                  </div></td>
                 </tr>
               ))
             )}

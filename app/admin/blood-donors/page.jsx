@@ -182,7 +182,7 @@ export default function BloodDonorPage() {
 
       {/* Table */}
       <div className="overflow-x-auto border rounded-lg shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="mobile-record-table min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -228,26 +228,26 @@ export default function BloodDonorPage() {
             ) : (
               filteredDonors.map((d) => (
                 <tr key={d.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium text-gray-900">
+                  <td data-label="Name" className="px-6 py-4 font-medium text-gray-900"><div className="record-cell-value">
                     <RecordView endpoint={`/blood-donor/${d.id}`} title="Blood donor details">{d.name}</RecordView>
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">{d.bloodGroup}</td>
-                  <td className="px-6 py-4 text-gray-600">{d.phone}</td>
-                  <td className="px-6 py-4 text-gray-600">{d.address}</td>
-                  <td className="px-6 py-4 text-center">
+                  </div></td>
+                  <td data-label="Blood Group" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{d.bloodGroup}</div></td>
+                  <td data-label="Phone" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{d.phone}</div></td>
+                  <td data-label="Address" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{d.address}</div></td>
+                  <td data-label="Status" className="px-6 py-4 text-center"><div className="record-cell-value">
                     <Badge variant={d.isActive ? "default" : "secondary"}>
                       {d.isActive ? "Active" : "Inactive"}
                     </Badge>
-                  </td>
+                  </div></td>
 
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td data-label="Actions" className="px-6 py-4 whitespace-nowrap text-center"><div className="record-cell-value">
                     <RecordView endpoint={`/blood-donor/${d.id}`} title="Blood donor details" /> <Link href={`/admin/blood-donors/${d.id}/edit`}>
                       <Button size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
                     <EntityActions resource="blood-donor" id={d.id} active={d.isActive} queryKey="blood-donors" />
-                  </td>
+                  </div></td>
                 </tr>
               ))
             )}

@@ -104,7 +104,7 @@ export default function DoctorsPage() {
 
       {/* Table */}
       <div className="overflow-x-auto border rounded-lg shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="mobile-record-table min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial</th>
@@ -142,18 +142,18 @@ export default function DoctorsPage() {
             ) : (
               flattenedDoctors.map((doc) => (
                 <tr key={doc.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-gray-600">{doc.order}</td>
-                  <td className="px-6 py-4"><Button size="sm" variant={doc.featured ? "default" : "outline"} disabled={featureMutation.isPending} onClick={() => featureMutation.mutate(doc)}>{doc.featured ? "Top" : "Set top"}</Button></td>
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                  <td data-label="Serial" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{doc.order}</div></td>
+                  <td data-label="Top Doctor" className="px-6 py-4"><div className="record-cell-value"><Button size="sm" variant={doc.featured ? "default" : "outline"} disabled={featureMutation.isPending} onClick={() => featureMutation.mutate(doc)}>{doc.featured ? "Top" : "Set top"}</Button></div></td>
+                  <td data-label="Name" className="px-6 py-4 whitespace-nowrap font-medium text-gray-900"><div className="record-cell-value">
                     <RecordView endpoint={`/doctor/${doc.id}`} title="Doctor details">{doc.firstName} {doc.middleName ? doc.middleName + " " : ""}{doc.lastName}</RecordView>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                  </div></td>
+                  <td data-label="Email" className="px-6 py-4 whitespace-nowrap text-gray-600"><div className="record-cell-value">
                     {doc.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                  </div></td>
+                  <td data-label="Phone" className="px-6 py-4 whitespace-nowrap text-gray-600"><div className="record-cell-value">
                     {doc.phone}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  </div></td>
+                  <td data-label="Status" className="px-6 py-4 whitespace-nowrap"><div className="record-cell-value">
                     <Badge
                       variant={
                         doc?.status === "Active" ? "default" : "secondary"
@@ -161,8 +161,8 @@ export default function DoctorsPage() {
                     >
                       {doc?.status}
                     </Badge>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
+                  </div></td>
+                  <td data-label="Actions" className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2"><div className="record-cell-value">
                     <RecordView endpoint={`/doctor/${doc.id}`} title="Doctor details" />
                     <Link href={`/admin/doctors/${doc.id}/edit`}>
                       <Button size="sm">
@@ -177,7 +177,7 @@ export default function DoctorsPage() {
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
-                  </td>
+                  </div></td>
                 </tr>
               ))
             )}

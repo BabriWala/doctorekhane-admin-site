@@ -128,3 +128,26 @@
   main button, main a { min-height: 2.5rem; }
   main input, main select, main textarea { font-size: 16px; }
 }
+
+/* Keep forms and cards shrinkable inside the admin workspace. */
+.admin-shell main :is(form, [data-slot="card"], [data-slot="card-content"], [data-slot="tabs-content"], .grid > *) { min-width: 0; }
+.admin-shell main :is(h1, h2, h3, p), [data-slot="dialog-content"], [data-slot="alert-dialog-content"] { overflow-wrap: anywhere; }
+
+@media (max-width: 1023px) {
+  [data-slot="button"], [data-slot="input"], [data-slot="select-trigger"] { min-height: 44px; }
+  [data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], select { font-size: 16px; }
+  [data-slot="select-trigger"] { max-width: 100%; }
+  [data-slot="card-header"], [data-slot="card-content"], [data-slot="card-footer"] { padding-inline: 1rem; }
+  .admin-shell main .items-center.justify-between { flex-wrap: wrap; gap: .75rem; }
+  .admin-shell main :is(input, textarea, select) { min-width: 0; max-width: 100%; }
+
+  /* Directory rows become labeled records; all actions remain visible. */
+  .mobile-record-table, .mobile-record-table tbody { display: block; width: 100%; min-width: 0; }
+  .mobile-record-table thead { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .mobile-record-table tbody > tr { display: block; padding: .75rem; }
+  .mobile-record-table td[data-label] { display: grid; grid-template-columns: minmax(0, 1fr); gap: .25rem; padding: .5rem 0; text-align: left; white-space: normal; }
+  .mobile-record-table td[data-label]::before { content: attr(data-label); font-size: .75rem; font-weight: 600; color: #64748b; }
+  .mobile-record-table .record-cell-value { min-width: 0; overflow-wrap: anywhere; }
+  .mobile-record-table td[data-label="Actions"] .record-cell-value { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+  .mobile-record-table td[colspan] { display: block; }
+}

@@ -16,7 +16,7 @@ import { useParams } from "next/navigation";
 export default function DoctorEditPageClient() {
   const { id } = useParams();
   return (
-    <div className="p-4">
+    <div className="min-w-0 sm:p-4">
       <Tabs defaultValue="personal-details" className="w-full">
         <TabsList>
           <TabsTrigger value="personal-details">Personal Details</TabsTrigger>

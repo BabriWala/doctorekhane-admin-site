@@ -178,7 +178,7 @@ export default function AmbulancesPage() {
 
       {/* Table */}
       <div className="overflow-x-auto border rounded-lg shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="mobile-record-table min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -227,26 +227,26 @@ export default function AmbulancesPage() {
             ) : (
               filteredAmbulances.map((a) => (
                 <tr key={a.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium text-gray-900">
+                  <td data-label="Vehicle" className="px-6 py-4 font-medium text-gray-900"><div className="record-cell-value">
                     <RecordView endpoint={`/ambulance/${a.id}`} title="Ambulance details">{a.vehicleNumber}</RecordView>
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">{a.type}</td>
-                  <td className="px-6 py-4 text-gray-600">{a.driverName}</td>
-                  <td className="px-6 py-4 text-gray-600">{a.phone}</td>
-                  <td className="px-6 py-4 text-gray-600">{a.address}</td>
-                  <td className="px-6 py-4 text-center">
+                  </div></td>
+                  <td data-label="Type" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{a.type}</div></td>
+                  <td data-label="Driver" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{a.driverName}</div></td>
+                  <td data-label="Phone" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{a.phone}</div></td>
+                  <td data-label="address" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{a.address}</div></td>
+                  <td data-label="Status" className="px-6 py-4 text-center"><div className="record-cell-value">
                     <Badge variant={a.isAvailable ? "default" : "secondary"}>
                       {a.isAvailable ? "Available" : "Busy"}
                     </Badge>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  </div></td>
+                  <td data-label="Actions" className="px-6 py-4 whitespace-nowrap text-center"><div className="record-cell-value">
                     <RecordView endpoint={`/ambulance/${a.id}`} title="Ambulance details" /> <Link href={`/admin/ambulances/${a.id}/edit`} className="">
                       <Button size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
                     <EntityActions resource="ambulance" id={a.id} queryKey="ambulances" />
-                  </td>
+                  </div></td>
                 </tr>
               ))
             )}

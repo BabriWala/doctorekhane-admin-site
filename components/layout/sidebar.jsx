@@ -57,7 +57,8 @@ export function Sidebar({ className, onNavigate }) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setCollapsed(!collapsed)}
+          aria-label={onNavigate ? "Close navigation" : collapsed ? "Expand navigation" : "Collapse navigation"}
+          onClick={() => onNavigate ? onNavigate() : setCollapsed(!collapsed)}
         >
           {collapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
         </Button>
@@ -65,19 +66,18 @@ export function Sidebar({ className, onNavigate }) {
 
       <Separator />
 
-      <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+      <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 space-y-2">
         {navigation.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
           return (
-            <Link key={item.name} href={item.href} onClick={onNavigate}>
-              <Button
+            <Button key={item.name} asChild
                 variant={isActive ? "default" : "ghost"}
                 className={cn("w-full justify-start", collapsed && "px-2")}
               >
-                <item.icon className="h-4 w-4" />
+                <Link href={item.href} onClick={onNavigate} aria-label={item.name} aria-current={isActive ? "page" : undefined}><item.icon className="h-4 w-4" />
                 {!collapsed && <span className="ml-2">{item.name}</span>}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           );
         })}
       </nav>

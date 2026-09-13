@@ -18,5 +18,5 @@ export default function EntityActions({ resource, id, queryKey, active }) {
     } catch (error) { toast.error(error.response?.data?.message || "Action failed"); }
     finally { setBusy(false); }
   };
-  return <span className="ml-2 inline-flex gap-2">{resource === "blood-donor" && <Button disabled={busy} size="sm" variant="outline" onClick={() => run(false)}>{active ? "Deactivate" : "Activate"}</Button>}<Button disabled={busy} size="sm" variant="destructive" onClick={() => run(true)}>Delete</Button></span>;
+  return <span className="inline-flex flex-wrap gap-2 sm:ml-2">{resource === "blood-donor" && <Button disabled={busy} size="sm" variant="outline" onClick={() => run(false)}>{active ? "Deactivate" : "Activate"}</Button>}<Button disabled={busy} size="sm" variant="destructive" onClick={() => run(true)}>Delete</Button></span>;
 }

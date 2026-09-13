@@ -47,9 +47,9 @@ export function DataTable({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 space-y-4">
       {selectedRows.size > 0 && (
-        <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+        <div className="flex flex-wrap items-center gap-2 p-2 bg-muted rounded-md">
           <span className="text-sm text-muted-foreground">{selectedRows.size} selected</span>
           <Button size="sm" variant="outline" onClick={() => onBulkAction?.("delete", Array.from(selectedRows))}>
             Delete Selected
@@ -68,8 +68,12 @@ export function DataTable({
         </div>
       </div>
 
+      <div className="flex flex-wrap items-center gap-2 lg:hidden">
+        {selectable && <label className="flex min-h-11 items-center gap-2 text-sm"><Checkbox checked={selectedRows.size === data.length && data.length > 0} onCheckedChange={handleSelectAll} />Select all records</label>}
+        {columns.filter(column => column.sortable).map(column => <Button key={column.key} size="sm" variant="outline" onClick={() => handleSort(column.key)}>Sort by {column.title}{sortConfig.key === column.key ? (sortConfig.direction === "asc" ? " ↑" : " ↓") : ""}</Button>)}
+      </div>
       <div className="max-w-full overflow-x-auto rounded-md border">
-        <Table className="min-w-[760px]">
+        <Table className="mobile-record-table min-w-[760px]">
           <TableHeader>
             <TableRow>
               {selectable && (
@@ -100,16 +104,17 @@ export function DataTable({
             {data.map((row) => (
               <TableRow key={row.id}>
                 {selectable && (
-                  <TableCell>
+                  <TableCell data-label="Select">
                     <Checkbox
+                      aria-label="Select record"
                       checked={selectedRows.has(row.id)}
                       onCheckedChange={(checked) => handleSelectRow(row.id, checked)}
                     />
                   </TableCell>
                 )}
                 {columns.map((column) => (
-                  <TableCell key={column.key}>
-                    {column.render ? column.render(row[column.key], row) : row[column.key]}
+                  <TableCell key={column.key} data-label={column.title}><div className="record-cell-value">
+                    {column.render ? column.render(row[column.key], row) : row[column.key]}</div>
                   </TableCell>
                 ))}
               </TableRow>
@@ -130,7 +135,7 @@ export function DataTable({
               onClick={() => onPageChange?.(pagination.currentPage - 1)}
               disabled={pagination.currentPage <= 1}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Previous page</span><ChevronLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Previous</span>
             </Button>
             <span className="text-sm">
@@ -143,7 +148,7 @@ export function DataTable({
               disabled={pagination.currentPage >= pagination.totalPages}
             >
               <span className="hidden sm:inline">Next</span>
-              <ChevronRight className="h-4 w-4" />
+              <span className="sr-only">Next page</span><ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

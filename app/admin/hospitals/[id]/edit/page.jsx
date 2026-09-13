@@ -15,7 +15,7 @@ const DoctorEditPage = () => {
   const { id } = useParams();
 
   return (
-    <div className="p-4">
+    <div className="min-w-0 sm:p-4">
       <Tabs defaultValue="basic-info" className="w-full">
         <TabsList>
           <TabsTrigger value="basic-info">Basic Info</TabsTrigger>
