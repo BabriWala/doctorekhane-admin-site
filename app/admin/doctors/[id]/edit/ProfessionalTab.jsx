@@ -14,6 +14,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ export default function ProfessionalTab({ doctorId }) {
     formState: { errors },
   } = useForm({
     defaultValues: {
+      allDegrees: "",
       position: "",
       department: "",
       field: "",
@@ -66,6 +68,7 @@ export default function ProfessionalTab({ doctorId }) {
         if (res.data?.professional) {
           reset({
             ...res.data.professional,
+            allDegrees: res.data.professional?.allDegrees || "",
             status: res.data.professional?.status || "Active",
             languagesText: (res.data.languages || []).join(", "),
             servicesText: (res.data.services || []).join(", "),
@@ -115,6 +118,11 @@ export default function ProfessionalTab({ doctorId }) {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1 md:col-span-2">
+              <Label htmlFor="allDegrees">All degrees</Label>
+              <Textarea id="allDegrees" {...register("allDegrees")} disabled={loading} placeholder="MBBS, BCS (Health), MCPS (Surgery), FCPS (Surgery)" rows={3} />
+              <p className="text-xs text-muted-foreground">Enter degree names only, separated by commas. Shown below the doctor’s name.</p>
+            </div>
             {/* Position */}
             <div className="space-y-1">
               <Label>Position <span className="text-red-600">*</span></Label>
