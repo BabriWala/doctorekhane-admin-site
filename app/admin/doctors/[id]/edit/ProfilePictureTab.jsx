@@ -36,12 +36,12 @@ export default function ProfilePictureTab({ doctorId }) {
     fetchDoctor();
   }, [doctorId, toast]);
 
+  useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
+
   // Handle file select
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-    }
+    setPreview(file ? URL.createObjectURL(file) : null);
   };
 
   // Handle upload
@@ -64,6 +64,7 @@ export default function ProfilePictureTab({ doctorId }) {
       );
       setProfilePicture(res.data.profilePicture);
       setPreview(null);
+      e.target.reset();
       toast.success("Profile picture updated successfully"); // ✅ success toast
     } catch (error) {
       toast.error(
@@ -109,8 +110,8 @@ export default function ProfilePictureTab({ doctorId }) {
 
         {/* Upload Form */}
         <form onSubmit={handleUpload} className="space-y-4">
-          <input type="file" name="profilePicture" accept="image/*" />
-          <Button type="submit" disabled={loading}>
+          <input type="file" name="profilePicture" accept="image/*" onChange={handleFileChange} disabled={loading} />
+          <Button type="submit" disabled={loading || !preview}>
             {loading ? "Uploading..." : "Upload"}
           </Button>
         </form>

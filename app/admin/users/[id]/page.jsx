@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
 "use client";
+import { formatDateTime } from "@/lib/time";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -452,13 +453,13 @@ export default function UserDetailPage({ params }) {
                   <div className="space-y-2">
                     <Label>Created At</Label>
                     <p className="font-medium">
-                      {new Date(user.createdAt).toLocaleString()}
+                      {formatDateTime(user.createdAt)}
                     </p>
                   </div>
                   <div className="space-y-2">
                     <Label>Last Updated</Label>
                     <p className="font-medium">
-                      {new Date(user.updatedAt).toLocaleString()}
+                      {formatDateTime(user.updatedAt)}
                     </p>
                   </div>
                 </div>

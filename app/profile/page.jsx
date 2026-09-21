@@ -140,16 +140,16 @@ export default function ProfilePage() {
               <CardDescription>Update your profile picture</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col items-start gap-4 sm:flex-row sm:gap-6">
                 <Avatar className="h-24 w-24">
                   <AvatarImage src={user?.profilePhoto || "/placeholder.svg"} />
                   <AvatarFallback className="text-2xl">
                     {user?.name?.charAt(0)?.toUpperCase() || "A"}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1">
+                <div className="min-w-0 w-full flex-1">
                   <FileUpload
-                    onUpload={(files) => uploadMutation.mutate(files)}
+                    onUpload={(files) => uploadMutation.mutateAsync(files)}
                     accept={{ "image/*": [".png", ".jpg", ".jpeg"] }}
                     maxSize={5 * 1024 * 1024} // 5MB
                     multiple={false}

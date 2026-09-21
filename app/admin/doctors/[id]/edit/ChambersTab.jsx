@@ -14,6 +14,8 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { TimeInput } from "@/components/ui/time-input";
+import { formatTime } from "@/lib/time";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -196,12 +198,12 @@ export default function ChambersTab({ doctorId }) {
 
             <div>
               <Label>From <span className="text-red-600">*</span></Label>
-              <Input type="time" {...register("from", { required: true })} />
+              <Controller name="from" control={control} rules={{ required: true }} render={({ field }) => <TimeInput label="From" value={field.value} onChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} disabled={loading} />} />
             </div>
 
             <div>
               <Label>To <span className="text-red-600">*</span></Label>
-              <Input type="time" {...register("to", { required: true })} />
+              <Controller name="to" control={control} rules={{ required: true }} render={({ field }) => <TimeInput label="To" value={field.value} onChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} disabled={loading} />} />
             </div>
 
             <div>
@@ -265,7 +267,7 @@ export default function ChambersTab({ doctorId }) {
                 <div>
                   <p className="font-medium">{c.chamberName}</p>
                   <p className="text-sm text-gray-600">
-                    {c.day} | {c.from} - {c.to}
+                    {c.day} | {formatTime(c.from)} - {formatTime(c.to)}
                   </p>
                   <p className="text-xs text-gray-500">
                     {c.address?.street}, {c.address?.city}, {c.address?.country}

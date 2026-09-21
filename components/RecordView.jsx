@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatTimeRange, formatDateTime } from "@/lib/time";
 import { Eye } from "lucide-react";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,8 @@ function Details({ value, field = "" }) {
     const src = value.startsWith("/") ? `${process.env.NEXT_PUBLIC_API_URL || ""}${value}` : value;
     return <div><img src={src} alt={labelOf(field)} className="mb-2 max-h-56 max-w-full rounded-lg object-contain" /><span>{value}</span></div>;
   }
+  if (typeof value === "string" && /^(from|to|open|close|timeSlot|time)$/i.test(field)) return <span>{formatTimeRange(value)}</span>;
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) return <span>{formatDateTime(value)}</span>;
   return <span>{String(value)}</span>;
 }
 

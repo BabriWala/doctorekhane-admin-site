@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { useDropzone } from "react-dropzone"
 import { UploadIcon, X, File } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -24,8 +24,13 @@ export function Upload({
     const [files, setFiles] = useState<(File & { preview?: string })[]>([])
     const [uploading, setUploading] = useState(false)
 
+    const filesRef = useRef(files)
+    useEffect(() => { filesRef.current = files }, [files])
+    useEffect(() => () => { filesRef.current.forEach(file => { if (file.preview) URL.revokeObjectURL(file.preview) }) }, [])
+
     const onDrop = useCallback(
         (acceptedFiles: File[]) => {
+            filesRef.current.forEach(file => { if (file.preview) URL.revokeObjectURL(file.preview) })
             setFiles(
                 acceptedFiles.map((file) =>
                     Object.assign(file, {
@@ -34,10 +39,9 @@ export function Upload({
                 )
             );
 
-            // Immediately call onUpload here to update form value
-            onUpload(acceptedFiles).catch(console.error);
+
         },
-        [onUpload]
+        []
     );
 
 
@@ -46,9 +50,11 @@ export function Upload({
         accept,
         maxSize,
         multiple,
+        disabled: uploading,
     })
 
     const removeFile = (index: number) => {
+        if (files[index]?.preview) URL.revokeObjectURL(files[index].preview!)
         setFiles((prev) => prev.filter((_, i) => i !== index))
     }
 
@@ -57,6 +63,7 @@ export function Upload({
         setUploading(true)
         try {
             await onUpload(files)
+            files.forEach(file => { if (file.preview) URL.revokeObjectURL(file.preview) })
             setFiles([])
         } catch (error) {
             console.error("Upload failed:", error)
@@ -98,7 +105,7 @@ export function Upload({
                                 <img
                                     src={file.preview || "/placeholder.svg"}
                                     alt={file.name}
-                                    className="h-12 w-12 object-cover rounded"
+                                    className="h-24 w-24 shrink-0 object-contain rounded"
                                 />
                             ) : (
                                 <File className="h-12 w-12 text-muted-foreground" />
@@ -109,12 +116,12 @@ export function Upload({
                                     {Math.round(file.size / 1024)} KB
                                 </p>
                             </div>
-                            <Button variant="ghost" size="sm" onClick={() => removeFile(index)}>
+                            <Button type="button" aria-label="Remove selected file" disabled={uploading} variant="ghost" size="sm" onClick={() => removeFile(index)}>
                                 <X className="h-4 w-4" />
                             </Button>
                         </div>
                     ))}
-                    <Button onClick={handleUpload} disabled={uploading} className="w-full">
+                    <Button type="button" onClick={handleUpload} disabled={uploading} className="w-full">
                         {uploading ? "Uploading..." : "Upload Files"}
                     </Button>
                 </div>
