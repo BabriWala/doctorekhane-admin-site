@@ -3,7 +3,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import DateSelect, { todayISO } from "@/components/DateSelect";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import api from "@/lib/api";
 
@@ -23,6 +24,7 @@ export default function DonationInfoTab({ donorId }) {
   const [loading, setLoading] = useState(false);
 
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -40,7 +42,7 @@ export default function DonationInfoTab({ donorId }) {
   useEffect(() => {
     const fetchDonationInfo = async () => {
       try {
-        const res = await api.get(`/blood-donor/${donorId}`);
+        const res = await api.get(`/blood-donor/admin/${donorId}`);
         if (res.data?.donor?.donationInfo) {
           const data = {
             ...res.data.donor.donationInfo,
@@ -89,11 +91,7 @@ export default function DonationInfoTab({ donorId }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label>Last Donation Date</Label>
-              <Input
-                type="date"
-                {...register("lastDonationDate")}
-                disabled={loading}
-              />
+              <Controller name="lastDonationDate" control={control} rules={{ required: false }} render={({ field }) => <DateSelect label="Last donation date" locale="en-GB" value={field.value} onChange={field.onChange} required={false} max={todayISO()} />} />
             </div>
 
             <div className="space-y-1">

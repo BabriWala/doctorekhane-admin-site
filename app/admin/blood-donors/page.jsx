@@ -35,7 +35,7 @@ export default function BloodDonorPage() {
   const { data, isLoading, isFetching, error } = useQuery({
     queryKey: ["blood-donors", params],
     queryFn: async () => {
-      const res = await api.get("/blood-donor", { params });
+      const res = await api.get("/blood-donor/admin", { params });
       return res.data; // ✅ return full payload (donors + pagination)
     },
     refetchOnMount: "always",
@@ -58,7 +58,7 @@ export default function BloodDonorPage() {
       name: `${d?.basicInfo?.firstName || ""} ${d?.basicInfo?.lastName || ""}`.trim(),
       bloodGroup: d?.basicInfo?.bloodGroup || "",
       phone: d?.contact?.phone || "",
-      address: d?.address?.address || "",
+      address: [d?.address?.address, d?.address?.street, d?.address?.city, d?.address?.district || d?.address?.state].filter(Boolean).join(", "),
       isActive: d?.donationInfo?.isActive ?? false,
     })) || [];
 
@@ -152,8 +152,8 @@ export default function BloodDonorPage() {
           }}
         >
           <option value="">All</option>
-          <option value="true">Active</option>
-          <option value="false">Inactive</option>
+          <option value="true">Published</option>
+          <option value="false">Pending / unpublished</option>
         </select>
       </div>
 
@@ -229,19 +229,19 @@ export default function BloodDonorPage() {
               filteredDonors.map((d) => (
                 <tr key={d.id} className="hover:bg-gray-50">
                   <td data-label="Name" className="px-6 py-4 font-medium text-gray-900"><div className="record-cell-value">
-                    <RecordView endpoint={`/blood-donor/${d.id}`} title="Blood donor details">{d.name}</RecordView>
+                    <RecordView endpoint={`/blood-donor/admin/${d.id}`} title="Blood donor details">{d.name}</RecordView>
                   </div></td>
                   <td data-label="Blood Group" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{d.bloodGroup}</div></td>
                   <td data-label="Phone" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{d.phone}</div></td>
                   <td data-label="Address" className="px-6 py-4 text-gray-600"><div className="record-cell-value">{d.address}</div></td>
                   <td data-label="Status" className="px-6 py-4 text-center"><div className="record-cell-value">
                     <Badge variant={d.isActive ? "default" : "secondary"}>
-                      {d.isActive ? "Active" : "Inactive"}
+                      {d.isActive ? "Published" : "Pending / unpublished"}
                     </Badge>
                   </div></td>
 
                   <td data-label="Actions" className="px-6 py-4 whitespace-nowrap text-center"><div className="record-cell-value">
-                    <RecordView endpoint={`/blood-donor/${d.id}`} title="Blood donor details" /> <Link href={`/admin/blood-donors/${d.id}/edit`}>
+                    <RecordView endpoint={`/blood-donor/admin/${d.id}`} title="Blood donor details" /> <Link href={`/admin/blood-donors/${d.id}/edit`}>
                       <Button size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>

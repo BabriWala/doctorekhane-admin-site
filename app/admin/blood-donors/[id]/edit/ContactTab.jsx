@@ -38,7 +38,7 @@ export default function ContactTab({ donorId }) {
   useEffect(() => {
     const fetchDonor = async () => {
       try {
-        const res = await api.get(`/blood-donor/${donorId}`);
+        const res = await api.get(`/blood-donor/admin/${donorId}`);
         if (res.data?.donor?.contact) {
           reset(res.data.donor.contact);
         }

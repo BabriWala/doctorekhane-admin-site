@@ -3,7 +3,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import DateSelect, { todayISO } from "@/components/DateSelect";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import api from "@/lib/api";
 
@@ -29,6 +30,7 @@ export default function BasicInfoTab({ donorId }) {
   const [loading, setLoading] = useState(false);
 
   const {
+    control,
     register,
     handleSubmit,
     watch,
@@ -50,7 +52,7 @@ export default function BasicInfoTab({ donorId }) {
   useEffect(() => {
     const fetchDonor = async () => {
       try {
-        const res = await api.get(`/blood-donor/${donorId}`);
+        const res = await api.get(`/blood-donor/admin/${donorId}`);
         if (res.data?.donor?.basicInfo) {
           reset({ ...res.data.donor.basicInfo, dob: res.data.donor.basicInfo.dob ? String(res.data.donor.basicInfo.dob).slice(0, 10) : "" });
         }
@@ -145,11 +147,7 @@ export default function BasicInfoTab({ donorId }) {
 
             <div className="space-y-1">
               <Label>Date of Birth *</Label>
-              <Input
-                type="date"
-                {...register("dob", { required: "Date of Birth is required" })}
-                disabled={loading}
-              />
+              <Controller name="dob" control={control} rules={{ required: true }} render={({ field }) => <DateSelect label="Date of birth" locale="en-GB" value={field.value} onChange={field.onChange} required={true} max={todayISO()} />} />
               {errors.dob && (
                 <p className="text-xs text-red-500">{errors.dob.message}</p>
               )}

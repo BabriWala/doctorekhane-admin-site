@@ -23,7 +23,7 @@ export default function ProfilePictureTab({ donorId }) {
   useEffect(() => {
     const fetchDonor = async () => {
       try {
-        const res = await api.get(`/blood-donor/${donorId}`);
+        const res = await api.get(`/blood-donor/admin/${donorId}`);
         if (res.data?.donor?.basicInfo?.profilePicture) {
           setProfilePicture(res.data.donor.basicInfo.profilePicture);
         }

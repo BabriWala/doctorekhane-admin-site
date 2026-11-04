@@ -13,10 +13,10 @@ export default function EntityActions({ resource, id, queryKey, active }) {
     try {
       if (remove) await api.delete(`/${resource}/${id}`);
       else await api.put(`/${resource}/${id}/donation-info`, { isActive: !active });
-      toast.success(remove ? "Record deleted" : "Availability updated");
+      toast.success(remove ? "Record deleted" : "Publication status updated");
       client.invalidateQueries({ queryKey: [queryKey] });
     } catch (error) { toast.error(error.response?.data?.message || "Action failed"); }
     finally { setBusy(false); }
   };
-  return <span className="inline-flex flex-wrap gap-2 sm:ml-2">{resource === "blood-donor" && <Button disabled={busy} size="sm" variant="outline" onClick={() => run(false)}>{active ? "Deactivate" : "Activate"}</Button>}<Button disabled={busy} size="sm" variant="destructive" onClick={() => run(true)}>Delete</Button></span>;
+  return <span className="inline-flex flex-wrap gap-2 sm:ml-2">{resource === "blood-donor" && <Button disabled={busy} size="sm" variant="outline" onClick={() => run(false)}>{active ? "Unpublish" : "Approve & publish"}</Button>}<Button disabled={busy} size="sm" variant="destructive" onClick={() => run(true)}>Delete</Button></span>;
 }

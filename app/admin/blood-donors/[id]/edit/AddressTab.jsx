@@ -28,7 +28,7 @@ export default function AddressTab({ donorId }) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      address: "",
+      address: "", street: "", city: "", district: "", postalCode: "", country: "Bangladesh",
     },
   });
 
@@ -36,9 +36,9 @@ export default function AddressTab({ donorId }) {
   useEffect(() => {
     const fetchDonor = async () => {
       try {
-        const res = await api.get(`/blood-donor/${donorId}`);
+        const res = await api.get(`/blood-donor/admin/${donorId}`);
         if (res.data?.donor?.address) {
-          reset(res.data?.donor?.address);
+          reset({ ...res.data.donor.address, district: res.data.donor.address.district || res.data.donor.address.state || "" });
         }
       } catch (error) {
         toast.error(
@@ -73,36 +73,7 @@ export default function AddressTab({ donorId }) {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* <div className="space-y-1">
-              <Label>Street</Label>
-              <Input {...register("street")} disabled={loading} />
-            </div>
-            <div className="space-y-1">
-              <Label>City *</Label>
-              <Input
-                {...register("city", { required: "City is required" })}
-                disabled={loading}
-              />
-              {errors.city && (
-                <p className="text-xs text-red-500">{errors.city.message}</p>
-              )}
-            </div>
-            <div className="space-y-1">
-              <Label>State</Label>
-              <Input {...register("state")} disabled={loading} />
-            </div>
-            <div className="space-y-1">
-              <Label>Country</Label>
-              <Input {...register("country")} disabled={loading} />
-            </div>
-            <div className="space-y-1">
-              <Label>Postal Code</Label>
-              <Input {...register("postalCode")} disabled={loading} />
-            </div> */}
-            <div className="space-y-1">
-              <Label>Address</Label>
-              <Input {...register("address")} disabled={loading} />
-            </div>
+            {[["district", "District", true], ["city", "Upazila / City", true], ["street", "Area / Village", false], ["address", "Street / House details", false], ["postalCode", "Postal code", false], ["country", "Country", false]].map(([key, label, required]) => <div key={key} className="space-y-1"><Label htmlFor={key}>{label}{required ? " *" : ""}</Label><Input id={key} {...register(key, { required })} required={required} disabled={loading} /></div>)}
           </div>
 
           <Button type="submit" disabled={loading}>

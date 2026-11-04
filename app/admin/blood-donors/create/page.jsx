@@ -3,7 +3,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import DateSelect, { todayISO } from "@/components/DateSelect";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import api from "@/lib/api";
 
@@ -31,6 +32,7 @@ export default function CreateBloodDonorForm() {
   const [loading, setLoading] = useState(false);
 
   const {
+    control,
     register,
     handleSubmit,
     setValue,
@@ -135,12 +137,7 @@ export default function CreateBloodDonorForm() {
 
               <div className="space-y-1">
                 <Label>Date of Birth <span className="text-red-600">*</span></Label>
-                <Input
-                  type="date"
-                  required
-                  {...register("dob", { required: "Date of birth is required" })}
-                  disabled={loading}
-                />
+                <Controller name="dob" control={control} rules={{ required: true }} render={({ field }) => <DateSelect label="Date of birth" locale="en-GB" value={field.value} onChange={field.onChange} required={true} max={todayISO()} />} />
               </div>
 
               <div className="space-y-1">
